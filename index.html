@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+
+    <title>AMZ</title>
+
+    <link rel="stylesheet" href="./js/jquery.js">
+
+    <!-- STYLE -->
+    <link rel="stylesheet" href="./style/reset.css">
+    <link rel="stylesheet" href="./style/style.css">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="navbar_item"> AMZ</a>
+        <div class="search_box navbar_item">
+
+            <form class="search_box">
+                <input type="search" id="search" placeholder="Buscar un pedido">
+                <button type="submit">
+                    <svg class="lupa" viewBox="0 0 24 24" fill="#000000">
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path
+                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+
+                </button>
+            </form>
+        </div>
+    </nav>
+
+
+
+
+    <div class="container">
+        <div class="inputs">
+            <div class="inputs1 create_container">
+                <form id="task_form">
+                    <input type="hidden" id="task_Id">
+
+                    <div class="form_group"><input type="text" id="numero" placeholder="Número de pedido" required>
+                    </div>
+                    <div class="form_group"><input type="number" id="precio" placeholder="Precio: " required></div>
+                    <div class="form_group"><input type="text" id="pais" placeholder="País: "></div>
+                    <div class="form_group"><input type="text" id="CP" placeholder="CP: "> </div>
+                    <div class="form_group"><input type="text" id="fecha" placeholder="Fecha: "></div>
+                    <div class="form_group"><input type="text" id="Hora" placeholder="Hora: "></div>
+                    <div class="form_group"><input type="text" id="mes" placeholder="Mes: "></div>
+                    <div class="form_group"><input type="text" id="dia" placeholder="Dia: "></div>
+
+                    <button type="submit" id="submit_create">Guardar Registro</button>
+                </form>
+            </div>
+
+            <div class="inputs2 create_container">
+
+                <button id="verdatos" class="verdatos btn_template">Ver Datos</button>
+                <button id="verestadisticas" class="verestadisticas btn_template">Ver Estadísticas</button>
+            </div>
+        </div>
+        <div class="task_container">
+            <input type="number" id="limit" placeholder="Número resultados">
+            <table class="table_tasks">
+
+
+                <div id="task_result" class="task_result">
+                    <ul id="list_written">
+                    </ul>
+                </div>
+
+
+                <thead>
+                    <tr class="row thead">
+                        <td>
+                            <p>ID</p>
+                        </td>
+                        <td>
+                            <p>Número</p>
+                        </td>
+                        <td>
+                            <p>Precio</p>
+                        </td>
+                        <td>
+                            <p>País</p>
+                        </td>
+                        <td>
+                            <p>CP</p>
+                        </td>
+                        <td>
+                            <p>Data</p>
+                        </td>
+                        <td>
+                            <p>Fecha</p>
+                        </td>
+                        <td>
+                            <p>Hora</p>
+                        </td>
+                        <td>
+                            <p>Aprox</p>
+                        </td>
+                        <td>
+                            <p>Mes</p>
+                        </td>
+                        <td>
+                            <p>Día</p>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody id="tasks"></tbody>
+            </table>
+            <div class="stadistics">
+                <h3 class="subtitles_stad">Ventes totals: <b><span id="D_BrutTotal"></span></b>€</h3>
+                <p><b><span id="D_VentesTotals"></span></b> Ventes totals.</p>
+
+
+
+                <div class="all_stats">
+                    <!-- Dies de la setmana -->
+                    <div class="box_stat">
+                        <p class="stat_title stat_title_week">Ventes totals per dia de la semana:</p>
+
+                        <div class="grid_stats grid_stats_week">
+                            <div class="datos_box">
+                                <p class="av_p">Ventes els dilluns: </p>
+                                <p class="av_p">Ventes els dimarts: </p>
+                                <p class="av_p">Ventes els dimecres: </p>
+                                <p class="av_p">Ventes els dijous: </p>
+                                <p class="av_p">Ventes els divendres: </p>
+                                <p class="av_p">Ventes els dissabte: </p>
+                                <p class="av_p">Ventes els diumenge: </p>
+                            </div>
+                            <div class="datos_box">
+                                <div class="Barres_weekday">Si veus això vol dir que els gràfics dels dies de la setmana no funcionen.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mesos de l'any -->
+                    <div class="box_stat">
+                        <p class="stat_title stat_title_months">Ventes totals per mesos de l'any:</p>
+
+                        <div class="grid_stats grid_stats_months">
+                            <div class="datos_box">
+                                <p class="av_p">Ventes en Gener: </p>
+                                <p class="av_p">Ventes en Febrer: </p>
+                                <p class="av_p">Ventes en Març: </p>
+                                <p class="av_p">Ventes en Abril: </p>
+                                <p class="av_p">Ventes en Maig: </p>
+                                <p class="av_p">Ventes en Juny: </p>
+                                <p class="av_p">Ventes en Juliol: </p>
+                                <p class="av_p">Ventes en Agost: </p>
+                                <p class="av_p">Ventes en Septembre: </p>
+                                <p class="av_p">Ventes en Octubre: </p>
+                                <p class="av_p">Ventes en Novembre: </p>
+                                <p class="av_p">Ventes en Decembre: </p>
+                            </div>
+                            <div class="datos_box">
+                                <div class="Barres_month">Si veus això vol dir que els gràfics dels mesos de l'any no funcionen.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Païssos -->
+                    <div class="box_stat">
+                        <p class="stat_title stat_title_hours">Ventes totals per hores aprox:</p>
+
+                        <div class="grid_stats grid_stats_hours">
+                            <div class="datos_box">
+                                <div class="hourstable">
+
+                                    <div class="datos_box">
+                                        <div class="Barres_hours">Si veus això vol dir que els gràfics dels mesos de l'any no funcionen.</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    </div>
+
+
+
+
+
+    <!-- SCRIPT -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+    <script src="./js/jquery.js"></script>
+    <script src="./js/functions.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+
+</html>
