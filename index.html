@@ -67,8 +67,30 @@
                 <button id="verestadisticas" class="verestadisticas btn_template">Ver Estadísticas</button>
             </div>
         </div>
+
+
+
+
         <div class="task_container">
-            <input type="number" id="limit" placeholder="Número resultados">
+            <form>
+                <input type="number" id="limit" placeholder="Número resultados">
+
+                <div>
+                    <div class="witch_db_general">
+                        <input type="radio" id="witch_db_general" name="witch_db" value="Rebuts" checked>
+                        <label for="witch_db_general">Comandes</label>
+                    </div>
+                    <div class="witch_db_backup">
+
+
+                        <input type="radio" id="witch_db_backup" name="witch_db" value="Backup">
+                        <label for="witch_db_backup">Backup</label>
+                    </div>
+
+                </div>
+
+            </form>
+
             <table class="table_tasks">
 
 
@@ -163,7 +185,8 @@
                                 <p class="av_p">Ventes en Decembre: </p>
                             </div>
                             <div class="datos_box">
-                                <div class="Barres_month">Si veus això vol dir que els gràfics dels mesos de l'any no funcionen.</div>
+                                <div class="Barres_month">Si veus això vol dir que els gràfics dels mesos de l'any no funcionen.
+                                </div>
                             </div>
                         </div>
                     </div>

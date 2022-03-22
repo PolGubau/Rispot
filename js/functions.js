@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+
+
     $('.grid_stats_months').slideUp();
     $('.grid_stats_week').slideUp();
     $('.grid_stats_hours').slideUp();

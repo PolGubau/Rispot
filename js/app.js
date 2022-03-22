@@ -3,9 +3,33 @@ $(document).ready(function() {
     // host: mysql-database-sc.alwaysdata.net 
 
     console.log('Jquery working Good');
+
+    // STARTING STARTS
     $('.stadistics').hide();
     $('#task_result').hide();
     let edit = false;
+    var backup = false;
+
+
+
+
+    $('.witch_db_general').click(function() {
+        backup = false;
+        fetchTasks();
+
+        // if ($(this).is(':checked')) {
+        //         }
+    });
+    $('.witch_db_backup').click(function() {
+        backup = true;
+        fetchTasks();
+
+        // if ($(this).is(':checked')) {
+        //         }
+    });
+
+
+
 
 
     const tema_color = 5;
@@ -116,7 +140,9 @@ $(document).ready(function() {
 
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit) {
-        $.post('API.php?viewDB', { limit }, function(response) {
+        let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
+        console.log(url);
+        $.post(url, { limit }, function(response) {
             let tasks = JSON.parse(response);
             let template = '';
             tasks.forEach(task => {

@@ -200,3 +200,37 @@ if (isset($_REQUEST['viewDB'])) {
     $json_string = json_encode($json);
     echo $json_string;
 }
+// View backup Database
+if (isset($_REQUEST['viewBackupDB'])) {
+
+    if (!isset($_POST['limit'])) $limit = 10;
+    if (isset($_POST['limit'])) $limit = $_POST['limit'];
+
+
+    $query = "SELECT * FROM backup ORDER BY ID DESC LIMIT $limit";
+    $result = mysqli_query($connection, $query);
+
+    if (!$result) {
+        die('Query Error ' . mysqli_errno($connection));
+    }
+
+    $json = array();
+    while ($row = mysqli_fetch_array($result)) {
+        $json[] = array(
+            'ID' => $row['ID'],
+            'NUMBER' => $row['NUMBER'],
+            'PRICE' => $row['PRICE'],
+            'COUNTRY' => $row['COUNTRY'],
+            'CP' => $row['CP'],
+            'DATEHOUR' => $row['DATEHOUR'],
+            'DATE' => $row['DATE'],
+            'HOUR' => $row['HOUR'],
+            'HOURAPROX' => $row['HOURAPROX'],
+            'MONTH' => $row['MONTH'],
+            'WEEKDAY' => $row['WEEKDAY']
+        );
+    };
+
+    $json_string = json_encode($json);
+    echo $json_string;
+}
