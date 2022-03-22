@@ -202,7 +202,6 @@ $(document).ready(function() {
                 $('.Barres_hours').html('<div class="allhours">' + templatehours + '</div');
 
 
-
             });
 
             fetchTasks()
