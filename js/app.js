@@ -269,6 +269,7 @@ $(document).ready(function() {
     });
 
     $('.reloadSvg').click(function() {
+        limit = 10;
         // caching the object for performance reasons
         var $elem = $('.reloadSvg');
         var angle = 180;
@@ -285,7 +286,7 @@ $(document).ready(function() {
                 });
             }
         });
-        fetchTasks();
+        fetchTasks(limit);
     });
 
 
