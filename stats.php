@@ -50,7 +50,7 @@ $json[] = array(
     'WEEKDAYS' => $weekdays,
     'COUNTRY' => $paises,
     'HOURSAPROX'=>$hores,
-    'DATA'=>$data,
+    // 'DATA'=>$data,
     'ANYS'=>$anys
 );
 

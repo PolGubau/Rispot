@@ -39,7 +39,8 @@ if (isset($_REQUEST['deleteFromDB'])) {
 
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
-        $query = "DELETE FROM pedidos WHERE ID= $id";
+        $db = $_POST['db'];
+        $query = "DELETE FROM $db WHERE ID= $id";
         $result = mysqli_query($connection, $query);
 
         if (!$result) {

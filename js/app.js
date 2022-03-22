@@ -16,17 +16,12 @@ $(document).ready(function() {
     $('.witch_db_general').click(function() {
         backup = false;
         fetchTasks();
-
-        // if ($(this).is(':checked')) {
-        //         }
     });
     $('.witch_db_backup').click(function() {
         backup = true;
         fetchTasks();
-
-        // if ($(this).is(':checked')) {
-        //         }
     });
+
 
 
 
@@ -141,7 +136,6 @@ $(document).ready(function() {
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit) {
         let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
-        console.log(url);
         $.post(url, { limit }, function(response) {
             let tasks = JSON.parse(response);
             let template = '';
@@ -175,12 +169,12 @@ $(document).ready(function() {
 
         $.post('stats.php', {}, function(response) {
             let graphs = JSON.parse(response);
-
             graphs.forEach(data => {
 
                 $('#D_weekdays').text(data.TOTAL);
                 $('#D_BrutTotal').text(data.TOTAL);
                 $('#D_VentesTotals').text(data.CANTIDAD_VENTAS);
+
                 const weekdays = data.WEEKDAYS;
                 const months = data.MONTHS;
                 const hours = data.HOURSAPROX;
@@ -241,7 +235,11 @@ $(document).ready(function() {
         if (confirm('Are you sure you want to delete it?')) {
             let element = $(this)[0].parentElement.parentElement;
             let id = $(element).attr('task_id');
-            $.post('API.php?deleteFromDB', { id }, function(response) {
+
+
+            let db = backup === false ? 'pedidos' : 'backup';
+
+            $.post('API.php?deleteFromDB', { id, 'db': db }, function(response) {
                 fetchTasks();
             });
         }
@@ -270,9 +268,33 @@ $(document).ready(function() {
         });
     });
 
+    $('.reloadSvg').click(function() {
+        // caching the object for performance reasons
+        var $elem = $('.reloadSvg');
+        var angle = 180;
+        // we use a pseudo object for the animation
+        // (starts from `0` to `angle`), you can name it as you want
+        $({ deg: 0 }).animate({ deg: angle }, {
+            duration: 200,
+            step: function(now) {
+                // in the step-callback (that is fired each step of the animation),
+                // you can use the `now` paramter which contains the current
+                // animation-position (`0` up to `angle`)
+                $elem.css({
+                    transform: 'rotate(' + now + 'deg)'
+                });
+            }
+        });
+        fetchTasks();
+    });
+
+
+
+
+
     // CANVIAR MÈTODES
     $(document).on('click', '#verdatos', function() {
-        $('#limit').show();
+        $('.dbs_filters').show();
         $('.table_tasks').show();
         $('.stadistics').hide();
 
@@ -280,10 +302,12 @@ $(document).ready(function() {
         fetchTasks();
 
     });
+
     $(document).on('click', '#verestadisticas', function() {
-        $('#limit').hide();
         $('.table_tasks').hide();
         $('.stadistics').show();
+        $('.dbs_filters').hide();
+
         fetchTasks(0);
         fetchStadistics();
 

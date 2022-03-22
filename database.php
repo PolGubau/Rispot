@@ -1,6 +1,4 @@
 <?php
-
-
 $_host = 'localhost';
 $_user = 'root';
 $_password = '';
@@ -11,5 +9,4 @@ $connection = mysqli_connect(
     "$_user",
     "$_password",
     "$_table"
-
 );

@@ -235,3 +235,23 @@
         .allhours div {
             margin: 0 1px;
         }
+        
+        .dbs_filters {
+            display: flex;
+            flex-direction: row;
+            margin: 5px 0;
+        }
+        
+        .dbs_filters div {
+            margin-right: 2vw;
+        }
+        
+        #limit {
+            border-radius: 0;
+            border: 1px solid black;
+            padding: 0 0.3vw;
+        }
+        
+        .db_header td {
+            margin: 1px;
+        }
