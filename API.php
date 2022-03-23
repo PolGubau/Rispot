@@ -169,13 +169,15 @@ if (isset($_REQUEST['searchInDB'])) {
 // Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
 
-    if (!isset($_POST['limit'])) $limit = 10;
-    if (isset($_POST['limit'])) $limit = $_POST['limit'];
+    if (!isset($_POST['limit'])) {$limit = 10;}
+    else ($limit = $_POST['limit']);
+    
     if (!isset($_POST['order'])) {
         $order = 'ID';
     } else {
         $order = $_POST['order'];
     }
+    
     if (!isset($_POST['direction'])) {
         $direction = 'DESC';
     } else {

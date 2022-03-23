@@ -133,8 +133,12 @@ $(document).ready(function() {
         fetchTasks(limit, order, direction);
     });
 
-    $(document).on('click', '.header_row', function(e) {
-        order = this.getAttribute('campo')
+    $(document).on('click', '.header_row', function(event) {
+        $(event.target.tagName).not(this).removeClass("theader_active");
+        $(this).addClass("theader_active");
+
+        if (direction == 'DESC') { direction = 'ASC' } else { direction = 'DESC' }
+        order = this.getAttribute('campo');
         fetchTasks(limit, order, direction);
         e.preventDefault;
     });

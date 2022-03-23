@@ -107,7 +107,6 @@
         .task_result {
             padding: 10px 0;
             width: 100%;
-            border: 1px solid black;
         }
         
         .thead td p {
@@ -254,4 +253,16 @@
         
         .db_header td {
             margin: 1px;
+        }
+        
+        .header_row {
+            border-left: 1px solid grey;
+        }
+        
+        .header_row a {
+            padding: 5px;
+        }
+        
+        .theader_active {
+            background-color: #C7C7C7;
         }
