@@ -259,10 +259,18 @@
             border-left: 1px solid grey;
         }
         
+        .header_row:hover {
+            background-color: #e2e2e2;
+        }
+        
         .header_row a {
             padding: 5px;
         }
         
         .theader_active {
             background-color: #C7C7C7;
+        }
+        
+        .theader_active:hover {
+            background-color: rgb(173, 173, 173);
         }

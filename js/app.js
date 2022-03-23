@@ -108,7 +108,8 @@ $(document).ready(function() {
             fecha: $('#fecha').val(),
             Hora: $('#Hora').val(),
             Mes: $('#mes').val(),
-            Dia: $('#dia').val()
+            Dia: $('#dia').val(),
+            asin: $('#asin').val()
         };
 
         let url = edit === false ? 'API.php?addToDB' : 'API.php?upload'
@@ -134,6 +135,7 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.header_row', function(event) {
+        $('.header_row').removeClass("theader_active");
         $(event.target.tagName).not(this).removeClass("theader_active");
         $(this).addClass("theader_active");
 
@@ -142,6 +144,7 @@ $(document).ready(function() {
         fetchTasks(limit, order, direction);
         e.preventDefault;
     });
+
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit, order, direction) {
         let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
@@ -172,18 +175,14 @@ $(document).ready(function() {
     }
 
 
-
     // ESBORRAR ENTRADES
     $(document).on('click', '.button_delete', function() {
         let advice = backup === false ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
-        let db = backup === false ? 'pedidos' : 'backup';
 
         if (confirm(advice)) {
             let element = $(this)[0].parentElement.parentElement;
             let id = $(element).attr('task_id');
-
-
-
+            let db = backup === false ? 'pedidos' : 'backup';
             $.post('API.php?deleteFromDB', { 'id': id, 'db': db }, function(response) {
                 console.log(response)
                 fetchTasks();
@@ -209,15 +208,16 @@ $(document).ready(function() {
             $('#Horaaprox').val(row[0].Horaaprox);
             $('#mes').val(row[0].mes);
             $('#dia').val(row[0].dia);
+            $('#asin').val(row[0].asin);
             edit = true;
             $('#submit_create').text('Actualitzar');
         });
     });
+
     // Reload
     $('.reloadSvg').click(function() {
         console.clear();
-        // limit = 10;
-        // caching the object for performance reasons
+        $('.header_row').removeClass("theader_active");
         var $elem = $('.reloadSvg');
         var angle = 180;
         // we use a pseudo object for the animation
@@ -235,11 +235,6 @@ $(document).ready(function() {
         });
         fetchTasks(limit);
     });
-
-
-
-
-
 
 
     //IMPRIMIR LES ESTADISTIQUES

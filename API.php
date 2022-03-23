@@ -38,14 +38,13 @@ if (isset($_REQUEST['valorize'])) {
 if (isset($_REQUEST['deleteFromDB'])) {
 
     if (isset($_POST['id'])) {
-        $id = $_POST['id'];
-        $db = $_POST['db'];
-        $query = "DELETE FROM $db WHERE ID= $id";
+        $ID = $_POST['id'];
+        $DB = $_POST['db'];
+        $query = "DELETE FROM $DB WHERE ID= $ID";
         $result = mysqli_query($connection, $query);
 
-        if (!$result) {
-            die('Query Error ' . mysqli_errno($connection));
-        }
+        if (!$result) die('QE'.mysqli_errno($connection));
+        
     }
 }
 
@@ -62,6 +61,9 @@ if (isset($_REQUEST['addToDB'])) {
         $Hora = $_POST['Hora'];
         $Mes = $_POST['Mes'];
         $Dia = $_POST['Dia'];
+        $Asin = $_POST['asin'];
+        $User = $_user;
+        $Added= Date('D, d M Y H:i:s');
 
         $data = $fecha . ' ' . $Hora;
 
@@ -74,7 +76,7 @@ if (isset($_REQUEST['addToDB'])) {
         if ($Horaaprox > 23) $Horaaprox = 0;
 
 
-        $query = "INSERT INTO pedidos (NUMBER,PRICE,COUNTRY,CP,DATEHOUR,DATE,HOUR,HOURAPROX,MONTH, WEEKDAY) VALUES ('$numero',$precio ,'$pais','$CP' ,'$data' ,'$fecha','$Hora','$Horaaprox','$Mes','$Dia')";
+        $query = "INSERT INTO pedidos (NUMBER,PRICE,COUNTRY,CP,DATEHOUR,DATE,HOUR,HOURAPROX,MONTH, WEEKDAY,ASIN,USER,ADDED) VALUES ('$numero',$precio ,'$pais','$CP' ,'$data' ,'$fecha','$Hora','$Horaaprox','$Mes','$Dia','$Asin','$User','$Added')";
 
         $result = mysqli_query($connection, $query);
 
