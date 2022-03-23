@@ -134,6 +134,7 @@ $(document).ready(function() {
         fetchTasks(limit, order, direction);
     });
 
+    // Posar order y direcció
     $(document).on('click', '.header_row', function(event) {
         $('.header_row').removeClass("theader_active");
         $(event.target.tagName).not(this).removeClass("theader_active");
@@ -144,6 +145,7 @@ $(document).ready(function() {
         fetchTasks(limit, order, direction);
         e.preventDefault;
     });
+
 
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit, order, direction) {
@@ -178,11 +180,11 @@ $(document).ready(function() {
     // ESBORRAR ENTRADES
     $(document).on('click', '.button_delete', function() {
         let advice = backup === false ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
-
         if (confirm(advice)) {
             let element = $(this)[0].parentElement.parentElement;
             let id = $(element).attr('task_id');
             let db = backup === false ? 'pedidos' : 'backup';
+            console.log(id + db);
             $.post('API.php?deleteFromDB', { 'id': id, 'db': db }, function(response) {
                 console.log(response)
                 fetchTasks();
