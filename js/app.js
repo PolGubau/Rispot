@@ -2,17 +2,20 @@ $(document).ready(function() {
     // https://phpmyadmin.alwaysdata.com/phpmyadmin/index.php?route=/&route=%2F&lang=en 
     // host: mysql-database-sc.alwaysdata.net 
 
-    console.log('Jquery working Good');
+    // console.log('Jquery working Good');
 
-    // STARTING STARTS
+    // STARTING BASES
     $('.stadistics').hide();
     $('#task_result').hide();
     let edit = false;
     var backup = false;
+    var order = 'ID';
+    var direction = 'DESC';
+    var limit = '10';
 
 
 
-
+    // Change DBs
     $('.witch_db_general').click(function() {
         backup = false;
         fetchTasks();
@@ -24,10 +27,7 @@ $(document).ready(function() {
 
 
 
-
-
-
-    const tema_color = 5;
+    const tema_color = 3;
     fetchTasks();
 
     // BUSCAR A LA LUPA
@@ -46,7 +46,9 @@ $(document).ready(function() {
                 type: 'POST',
                 data: { search },
                 success: function(response) {
+
                     let tasks = JSON.parse(response);
+
                     let template = `
                     <tr class="row">
                     <td><b>ID</b></td>
@@ -88,7 +90,6 @@ $(document).ready(function() {
                 $(this).css("background-color", "yellow");
             });
 
-            console.log(this);
 
 
 
@@ -129,14 +130,18 @@ $(document).ready(function() {
     //POSAR UN LIMIT
     $('#limit').keyup(function(e) {
         const limit = $('#limit').val();
-        e.preventDefault;
-        fetchTasks(limit)
+        fetchTasks(limit, order, direction);
     });
 
+    $(document).on('click', '.header_row', function(e) {
+        order = this.getAttribute('campo')
+        fetchTasks(limit, order, direction);
+        e.preventDefault;
+    });
     //IMPRIMIR LES ENTRADES
-    function fetchTasks(limit) {
+    function fetchTasks(limit, order, direction) {
         let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
-        $.post(url, { limit }, function(response) {
+        $.post(url, { limit, order, direction }, function(response) {
             let tasks = JSON.parse(response);
             let template = '';
             tasks.forEach(task => {
@@ -153,6 +158,7 @@ $(document).ready(function() {
                     <td>${task.HOURAPROX}</td>
                     <td>${task.MONTH}</td>
                     <td>${task.WEEKDAY}</td>
+                    <td>${task.ASIN}</td>
         
                     <td> <button class="button_delete">Delete</button></td>
                     </tr>`
@@ -161,6 +167,77 @@ $(document).ready(function() {
         });
     }
 
+
+
+    // ESBORRAR ENTRADES
+    $(document).on('click', '.button_delete', function() {
+        let advice = backup === false ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
+        let db = backup === false ? 'pedidos' : 'backup';
+
+        if (confirm(advice)) {
+            let element = $(this)[0].parentElement.parentElement;
+            let id = $(element).attr('task_id');
+
+
+
+            $.post('API.php?deleteFromDB', { 'id': id, 'db': db }, function(response) {
+                console.log(response)
+                fetchTasks();
+            });
+        }
+    });
+
+    //EDITAR ENTRADES
+    $(document).on('click', '.nom_entrada', function() {
+        let element = $(this)[0].parentElement.parentElement;
+        let id = $(element).attr('task_id');
+
+        $.post('API.php?valorize', { id }, function(response) {
+            const row = JSON.parse(response);
+            console.log(row);
+            $('#numero').val(row[0].numero);
+            $('#precio').val(row[0].precio);
+            $('#pais').val(row[0].pais);
+            $('#CP').val(row[0].CP);
+            $('#data').val(row[0].data);
+            $('#fecha').val(row[0].fecha);
+            $('#Hora').val(row[0].Hora);
+            $('#Horaaprox').val(row[0].Horaaprox);
+            $('#mes').val(row[0].mes);
+            $('#dia').val(row[0].dia);
+            edit = true;
+            $('#submit_create').text('Actualitzar');
+        });
+    });
+    // Reload
+    $('.reloadSvg').click(function() {
+        console.clear();
+        // limit = 10;
+        // caching the object for performance reasons
+        var $elem = $('.reloadSvg');
+        var angle = 180;
+        // we use a pseudo object for the animation
+        // (starts from `0` to `angle`), you can name it as you want
+        $({ deg: 0 }).animate({ deg: angle }, {
+            duration: 200,
+            step: function(now) {
+                // in the step-callback (that is fired each step of the animation),
+                // you can use the `now` paramter which contains the current
+                // animation-position (`0` up to `angle`)
+                $elem.css({
+                    transform: 'rotate(' + now + 'deg)'
+                });
+            }
+        });
+        fetchTasks(limit);
+    });
+
+
+
+
+
+
+
     //IMPRIMIR LES ESTADISTIQUES
     function fetchStadistics() {
 
@@ -168,6 +245,7 @@ $(document).ready(function() {
         $('#list_written').html('');
 
         $.post('stats.php', {}, function(response) {
+
             let graphs = JSON.parse(response);
             graphs.forEach(data => {
 
@@ -229,68 +307,6 @@ $(document).ready(function() {
 
         });
     }
-
-    // ESBORRAR ENTRADES
-    $(document).on('click', '.button_delete', function() {
-        if (confirm('Are you sure you want to delete it?')) {
-            let element = $(this)[0].parentElement.parentElement;
-            let id = $(element).attr('task_id');
-
-
-            let db = backup === false ? 'pedidos' : 'backup';
-
-            $.post('API.php?deleteFromDB', { id, 'db': db }, function(response) {
-                fetchTasks();
-            });
-        }
-    });
-
-    //EDITAR ENTRADES
-    $(document).on('click', '.nom_entrada', function() {
-        let element = $(this)[0].parentElement.parentElement;
-        let id = $(element).attr('task_id');
-
-        $.post('API.php?valorize', { id }, function(response) {
-            const row = JSON.parse(response);
-            console.log(row);
-            $('#numero').val(row[0].numero);
-            $('#precio').val(row[0].precio);
-            $('#pais').val(row[0].pais);
-            $('#CP').val(row[0].CP);
-            $('#data').val(row[0].data);
-            $('#fecha').val(row[0].fecha);
-            $('#Hora').val(row[0].Hora);
-            $('#Horaaprox').val(row[0].Horaaprox);
-            $('#mes').val(row[0].mes);
-            $('#dia').val(row[0].dia);
-            edit = true;
-            $('#submit_create').text('Actualitzar');
-        });
-    });
-
-    $('.reloadSvg').click(function() {
-        limit = 10;
-        // caching the object for performance reasons
-        var $elem = $('.reloadSvg');
-        var angle = 180;
-        // we use a pseudo object for the animation
-        // (starts from `0` to `angle`), you can name it as you want
-        $({ deg: 0 }).animate({ deg: angle }, {
-            duration: 200,
-            step: function(now) {
-                // in the step-callback (that is fired each step of the animation),
-                // you can use the `now` paramter which contains the current
-                // animation-position (`0` up to `angle`)
-                $elem.css({
-                    transform: 'rotate(' + now + 'deg)'
-                });
-            }
-        });
-        fetchTasks(limit);
-    });
-
-
-
 
 
     // CANVIAR MÈTODES

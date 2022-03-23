@@ -100,18 +100,18 @@ if (isset($_REQUEST['upload'])) {
     $Hora = $_POST['Hora'];
     $Mes = $_POST['Mes'];
     $Dia = $_POST['Dia'];
-    
+
     $data = $fecha . ' ' . $Hora;
 
 
     $Horaaprox = substr($Hora, 0, 2);
     $minutos = substr($Hora, 3, 5);
-    
+
     intval($Horaaprox);
     if (intval($minutos) > 30) $Horaaprox++;
 
     if ($Horaaprox > 23) $Horaaprox = 0;
-    
+
 
     $query = "UPDATE `pedidos` SET `NUMBER`='$numero',`PRICE`=$precio,`COUNTRY`='$pais',`CP`='$CP',`DATEHOUR`='$data',`DATE`='$fecha',`HOUR`='$Hora',`HOURAPROX`=$Horaaprox,`MONTH`='$Mes',`WEEKDAY`='$Dia' WHERE 'ID'= $id";
 
@@ -123,21 +123,19 @@ if (isset($_REQUEST['upload'])) {
 // Searchs into de DB
 if (isset($_REQUEST['searchInDB'])) {
 
-    $seasrch = $_POST['search'];
+    $search = $_POST['search'];
     if (!empty($search)) {
 
         $query = "SELECT * FROM pedidos WHERE 
-    NUMBER LIKE '$search%' OR 
-    ID LIKE '$search%' OR 
-    PRICE LIKE '$search%' OR 
-    COUNTRY LIKE '$search%' OR 
-    CP LIKE '$search%' OR 
-    DATE LIKE '$search%' OR 
-    HOUR LIKE '$search%' OR 
-    MONTH LIKE '$search%' OR 
-    WEEKDAY LIKE '$search%'";
-
-
+            ID LIKE '$search%' OR 
+            NUMBER LIKE '$search%' OR 
+            PRICE LIKE '$search%' OR 
+            COUNTRY LIKE '$search%' OR 
+            CP LIKE '$search%' OR 
+            DATE LIKE '$search%' OR 
+            HOUR LIKE '$search%' OR 
+            MONTH LIKE '$search%' OR 
+            WEEKDAY LIKE '$search%'";
 
         $result = mysqli_query($connection, $query);
         if (!$result) {
@@ -162,6 +160,7 @@ if (isset($_REQUEST['searchInDB'])) {
         }
         $json_string = json_encode($json);
         echo $json_string;
+      
     } else {
         echo '';
     }
@@ -172,9 +171,20 @@ if (isset($_REQUEST['viewDB'])) {
 
     if (!isset($_POST['limit'])) $limit = 10;
     if (isset($_POST['limit'])) $limit = $_POST['limit'];
+    if (!isset($_POST['order'])) {
+        $order = 'ID';
+    } else {
+        $order = $_POST['order'];
+    }
+    if (!isset($_POST['direction'])) {
+        $direction = 'DESC';
+    } else {
+        $direction = $_POST['direction'];
+    }
 
 
-    $query = "SELECT * FROM pedidos ORDER BY ID DESC LIMIT $limit";
+
+    $query = "SELECT * FROM pedidos ORDER BY $order $direction LIMIT $limit";
     $result = mysqli_query($connection, $query);
 
     if (!$result) {
@@ -194,7 +204,8 @@ if (isset($_REQUEST['viewDB'])) {
             'HOUR' => $row['HOUR'],
             'HOURAPROX' => $row['HOURAPROX'],
             'MONTH' => $row['MONTH'],
-            'WEEKDAY' => $row['WEEKDAY']
+            'WEEKDAY' => $row['WEEKDAY'],
+            'ASIN' => $row['ASIN']
         );
     };
 

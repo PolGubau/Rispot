@@ -28,7 +28,6 @@ while ($row = mysqli_fetch_array($result_total,MYSQLI_BOTH
     array_push($paises,$row['COUNTRY']);
     array_push($hores,$row['HOURAPROX']);
     array_push($date,$row['DATE']);
-    // $anys= substr($row['DATE'], -3,4);
     array_push($any,substr($row['DATE'], -3,4));
 
 
@@ -50,7 +49,6 @@ $json[] = array(
     'WEEKDAYS' => $weekdays,
     'COUNTRY' => $paises,
     'HOURSAPROX'=>$hores,
-    // 'DATA'=>$data,
     'ANYS'=>$anys
 );
 
