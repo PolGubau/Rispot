@@ -16,16 +16,20 @@ if (isset($_REQUEST['valorize'])) {
 
         while ($row = mysqli_fetch_array($result)) {
             $json[] = array(
-                'numero' => $row['NUMBER'],
-                'precio' => $row['PRICE'],
-                'pais' => $row['COUNTRY'],
+                'ID' => $row['ID'],
+                'NUMBER' => $row['NUMBER'],
+                'PRICE' => $row['PRICE'],
+                'COUNTRY' => $row['COUNTRY'],
                 'CP' => $row['CP'],
-                'data' => $row['DATEHOUR'],
-                'fecha' => $row['DATE'],
-                'Hora' => $row['HOUR'],
-                'Horaaprox' => $row['HOURAPROX'],
-                'mes' => $row['MONTH'],
-                'dia' => $row['WEEKDAY']
+                'DATEHOUR' => $row['DATEHOUR'],
+                'DATE' => $row['DATE'],
+                'HOUR' => $row['HOUR'],
+                'HOURAPROX' => $row['HOURAPROX'],
+                'MONTH' => $row['MONTH'],
+                'WEEKDAY' => $row['WEEKDAY'],
+                'ASIN' => $row['ASIN'],
+                'USER' => $row['USER'],
+                'ADDED' => $row['ADDED'],
 
             );
         }
@@ -38,13 +42,13 @@ if (isset($_REQUEST['valorize'])) {
 if (isset($_REQUEST['deleteFromDB'])) {
 
     if (isset($_POST['id'])) {
-        $ID = $_POST['id'];
-        $DB = $_POST['db'];
-        $query = "DELETE FROM $DB WHERE ID= $ID";
+        $id = intval($_POST['id']);
+        $db = $_POST['db'];
+        $query = "DELETE FROM $db WHERE ID= $id";
         $result = mysqli_query($connection, $query);
 
-        if (!$result) die('QE'.mysqli_errno($connection));
-        
+        if (!$result) die('QE' . mysqli_errno($connection));
+        echo 'Deleted';
     }
 }
 
@@ -63,7 +67,7 @@ if (isset($_REQUEST['addToDB'])) {
         $Dia = $_POST['Dia'];
         $Asin = $_POST['asin'];
         $User = $_user;
-        $Added= Date('D, d M Y H:i:s');
+        $Added = Date('D, d M Y H:i');
 
         $data = $fecha . ' ' . $Hora;
 
@@ -75,6 +79,7 @@ if (isset($_REQUEST['addToDB'])) {
 
         if ($Horaaprox > 23) $Horaaprox = 0;
 
+        if (strlen($Horaaprox == 1)) $Horaaprox = '0' + $Horaaprox;
 
         $query = "INSERT INTO pedidos (NUMBER,PRICE,COUNTRY,CP,DATEHOUR,DATE,HOUR,HOURAPROX,MONTH, WEEKDAY,ASIN,USER,ADDED) VALUES ('$numero',$precio ,'$pais','$CP' ,'$data' ,'$fecha','$Hora','$Horaaprox','$Mes','$Dia','$Asin','$User','$Added')";
 
@@ -162,7 +167,6 @@ if (isset($_REQUEST['searchInDB'])) {
         }
         $json_string = json_encode($json);
         echo $json_string;
-      
     } else {
         echo '';
     }
@@ -171,15 +175,16 @@ if (isset($_REQUEST['searchInDB'])) {
 // Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
 
-    if (!isset($_POST['limit'])) {$limit = 10;}
-    else ($limit = $_POST['limit']);
-    
+    if (!isset($_POST['limit'])) {
+        $limit = 10;
+    } else ($limit = $_POST['limit']);
+
     if (!isset($_POST['order'])) {
         $order = 'ID';
     } else {
         $order = $_POST['order'];
     }
-    
+
     if (!isset($_POST['direction'])) {
         $direction = 'DESC';
     } else {
@@ -209,7 +214,10 @@ if (isset($_REQUEST['viewDB'])) {
             'HOURAPROX' => $row['HOURAPROX'],
             'MONTH' => $row['MONTH'],
             'WEEKDAY' => $row['WEEKDAY'],
-            'ASIN' => $row['ASIN']
+            'ASIN' => $row['ASIN'],
+            'USER' => $row['USER'],
+            'ADDED' => $row['ADDED'],
+
         );
     };
 
@@ -219,11 +227,25 @@ if (isset($_REQUEST['viewDB'])) {
 // View backup Database
 if (isset($_REQUEST['viewBackupDB'])) {
 
-    if (!isset($_POST['limit'])) $limit = 10;
-    if (isset($_POST['limit'])) $limit = $_POST['limit'];
+    if (!isset($_POST['limit'])) {
+        $limit = 10;
+    } else ($limit = $_POST['limit']);
+
+    if (!isset($_POST['order'])) {
+        $order = 'ID';
+    } else {
+        $order = $_POST['order'];
+    }
+
+    if (!isset($_POST['direction'])) {
+        $direction = 'DESC';
+    } else {
+        $direction = $_POST['direction'];
+    }
 
 
-    $query = "SELECT * FROM backup ORDER BY ID DESC LIMIT $limit";
+
+    $query = "SELECT * FROM backup ORDER BY $order $direction LIMIT $limit";
     $result = mysqli_query($connection, $query);
 
     if (!$result) {
@@ -243,10 +265,23 @@ if (isset($_REQUEST['viewBackupDB'])) {
             'HOUR' => $row['HOUR'],
             'HOURAPROX' => $row['HOURAPROX'],
             'MONTH' => $row['MONTH'],
-            'WEEKDAY' => $row['WEEKDAY']
+            'WEEKDAY' => $row['WEEKDAY'],
+            'ASIN' => $row['ASIN'],
+            'USER' => $row['USER'],
+            'ADDED' => $row['ADDED'],
+
         );
     };
 
     $json_string = json_encode($json);
     echo $json_string;
+}
+// Backup a Row
+if (isset($_REQUEST['BackupRow'])) {
+    $id = $_POST['id'];
+    $query = "INSERT INTO pedidos SELECT * FROM backup WHERE ID = $id";
+    $result = mysqli_query($connection, $query);
+    $query = "DELETE FROM backup WHERE ID = $id";
+    $result = mysqli_query($connection, $query);
+    
 }

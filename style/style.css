@@ -47,14 +47,18 @@
         }
         /*CREATE TASK*/
         
+        .inputs {
+            margin: 2vw;
+        }
+        
         .container {
             display: grid;
-            grid-template-columns: 20vw 80vw;
+            grid-template-columns: 19vw 81vw;
         }
         
         .create_container,
         .task_container {
-            margin: 2vw;
+            margin: 1vw 0;
             padding: 1vw;
         }
         
@@ -70,6 +74,13 @@
         
         .form_group input {
             width: 90%;
+            border: none;
+            padding: 5%;
+            margin-bottom: 3px;
+        }
+        
+        .form_group select {
+            width: 100%;
             border: none;
             padding: 5%;
             margin-bottom: 3px;
@@ -93,9 +104,10 @@
         .row {
             display: grid;
             width: 100%;
-            grid-template-columns: 1fr 2fr 1fr 1fr 1fr 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1.2fr 3fr 1fr 1fr;
             justify-items: start;
             align-items: center;
+            margin: 4px 0;
             justify-content: space-between;
         }
         
@@ -263,7 +275,8 @@
             background-color: #e2e2e2;
         }
         
-        .header_row a {
+        .header_row a,
+        .header_row b {
             padding: 5px;
         }
         

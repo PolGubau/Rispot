@@ -21,19 +21,11 @@
 <body>
 
     <nav class="navbar">
-        <a href="#" class="navbar_item"> AMZ</a>
+        <a href="#" class="navbar_item"> Gestió Base de Dades Rispot</a>
         <div class="search_box navbar_item">
 
             <form class="search_box">
                 <input type="search" id="search" placeholder="Buscar un pedido">
-                <button type="submit">
-                    <svg class="lupa" viewBox="0 0 24 24" fill="#000000">
-                        <path d="M0 0h24v24H0V0z" fill="none" />
-                        <path
-                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                    </svg>
-
-                </button>
             </form>
         </div>
     </nav>
@@ -52,10 +44,31 @@
                     <div class="form_group"><input type="number" id="precio" placeholder="Precio: " required></div>
                     <div class="form_group"><input type="text" id="pais" placeholder="País: "></div>
                     <div class="form_group"><input type="text" id="CP" placeholder="CP: "> </div>
-                    <div class="form_group"><input type="text" id="fecha" placeholder="Fecha: "></div>
-                    <div class="form_group"><input type="text" id="Hora" placeholder="Hora: "></div>
-                    <div class="form_group"><input type="text" id="mes" placeholder="Mes: "></div>
-                    <div class="form_group"><input type="text" id="dia" placeholder="Dia: "></div>
+                    <div class="form_group"><input type="date" id="fecha" placeholder="Fecha: "></div>
+                    <div class="form_group"><input type="time" id="Hora" placeholder="Hora: "></div>
+                    <div class="form_group"><select class="selects_inputs" name="mes" id="mes">
+                        <option value="Enero">Enero</option>
+                        <option value="Febrero">Febrero</option>
+                        <option value="Marzo">Marzo</option>
+                        <option value="Abril">Abril</option>
+                        <option value="Mayo">Mayo</option>
+                        <option value="Junio">Junio</option>
+                        <option value="Julio">Julio</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setiembre">Setiembre</option>
+                        <option value="Octubre">Octubre</option>
+                        <option value="Noviembre">Noviembre</option>
+                        <option value="Diciembre">Diciembre</option>
+                    </select></div>
+                    <div class="form_group"><select class="selects_inputs" name="dia" id="dia">
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select></div>
                     <div class="form_group"><input type="text" id="asin" placeholder="ASIN: "></div>
 
                     <button type="submit" id="submit_create">Guardar Registro</button>
@@ -104,7 +117,7 @@
 
                 <thead>
                     <tr class="row thead db_header">
-                        <td class='header_row' campo="ID">
+                        <td class='header_row theader_active' campo="ID">
                             <a>ID </a>
 
                         </td>
@@ -122,10 +135,6 @@
                         </td>
                         <td class='header_row' campo="CP">
                             <a>CP </a>
-
-                        </td>
-                        <td class='header_row' campo="DATEHOUR">
-                            <a>Date/ Hour</a>
 
                         </td>
                         <td class='header_row' campo="DATE">
@@ -150,7 +159,9 @@
                         </td>
                         <td class='header_row' campo="ASIN">
                             <a>ASIN </a>
-
+                        </td>
+                        <td class='header_row' campo="ADDED">
+                            <a>Added</a>
                         </td>
                     </tr>
                 </thead>

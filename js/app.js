@@ -51,17 +51,18 @@ $(document).ready(function() {
 
                     let template = `
                     <tr class="row">
-                    <td><b>ID</b></td>
-                    <td><b>NUMBER</b></td>
-                    <td><b>PRICE</b></td>
-                    <td><b>COUNTRY</b></td>
-                    <td><b>CP</b></td>
-                    <td><b>DATEHOUUR</b></td>
-                    <td><b>DATE</b></td>
-                    <td><b>HOUR</b></td>
-                    <td><b>HOUAPROX</b></td>
-                    <td><b>MONTH</b></td>
-                    <td><b>WEEKDAY</b></td>
+                    <td class="header_row"><b >ID</b></td>
+                    <td class="header_row"><b >NUMBER</b></td>
+                    <td class="header_row"><b >PRICE</b></td>
+                    <td class="header_row"><b >COUNTRY</b></td>
+                    <td class="header_row"><b >CP</b></td>
+                    <td class="header_row"><b >DATE</b></td>
+                    <td class="header_row"><b >HOUR</b></td>
+                    <td class="header_row"><b >APROX</b></td>
+                    <td class="header_row"><b >MONTH</b></td>
+                    <td class="header_row"><b >WEEKDAY</b></td>
+                    <td class="header_row"><b >ASIN</b></td>
+                    <td class="header_row"><b >Added</b></td>
                     </tr>`;
                     tasks.forEach(task => {
                         template += `
@@ -71,12 +72,13 @@ $(document).ready(function() {
                         <td class="searched"> ${task.PRICE}€</td>
                         <td class="searched"> ${task.COUNTRY}</td>
                         <td class="searched"> ${task.CP}</td>
-                        <td class="searched"> ${task.DATEHOUR}</td>
                         <td class="searched"> ${task.DATE}</td>
                         <td class="searched"> ${task.HOUR}</td>
                         <td class="searched"> ${task.HOURAPROX}</td>
                         <td class="searched"> ${task.MONTH}</td>
                         <td class="searched"> ${task.WEEKDAY}</td>
+                        <td class="searched"> ${task.ASIN}</td>
+                        <td class="searched"> ${task.USER} (${task.ADDED})</td>
                         </tr>`
 
                     })
@@ -135,9 +137,9 @@ $(document).ready(function() {
     });
 
     // Posar order y direcció
-    $(document).on('click', '.header_row', function(event) {
+    $(document).on('click', '.header_row', function(e) {
         $('.header_row').removeClass("theader_active");
-        $(event.target.tagName).not(this).removeClass("theader_active");
+        $(e.target.tagName).not(this).removeClass("theader_active");
         $(this).addClass("theader_active");
 
         if (direction == 'DESC') { direction = 'ASC' } else { direction = 'DESC' }
@@ -150,6 +152,7 @@ $(document).ready(function() {
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit, order, direction) {
         let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
+        if (bd == 'comandes') url = 'API.php?viewDB';
         $.post(url, { limit, order, direction }, function(response) {
             let tasks = JSON.parse(response);
             let template = '';
@@ -161,16 +164,22 @@ $(document).ready(function() {
                     <td>${task.PRICE}€</td>
                     <td>${task.COUNTRY}</td>
                     <td>${task.CP}</td>
-                    <td>${task.DATEHOUR}</td>
                     <td>${task.DATE}</td>
                     <td>${task.HOUR}</td>
                     <td>${task.HOURAPROX}</td>
                     <td>${task.MONTH}</td>
                     <td>${task.WEEKDAY}</td>
                     <td>${task.ASIN}</td>
+                    <td>${task.USER} (${task.ADDED})</td>
         
-                    <td> <button class="button_delete">Delete</button></td>
-                    </tr>`
+                    <td> <button class="button_delete">Delete</button></td>`;
+                if (backup == true) {
+                    template += `
+
+                    <td> <button class="button_backup">Backup</button></td>
+                    `;
+                }
+                template += '</tr>';
             });
             $('#tasks').html(template);
         });
@@ -187,9 +196,20 @@ $(document).ready(function() {
             console.log(id + db);
             $.post('API.php?deleteFromDB', { 'id': id, 'db': db }, function(response) {
                 console.log(response)
-                fetchTasks();
+                fetchTasks(limit, order, direction);
             });
         }
+    });
+
+    // Fer backup de les entrades
+    $(document).on('click', '.button_backup', function() {
+        let element = $(this)[0].parentElement.parentElement;
+        let id = $(element).attr('task_id');
+        $.post('API.php?BackupRow', { 'id': id }, function(response) {
+            backup = false;
+            fetchTasks(limit, order, direction);
+        });
+
     });
 
     //EDITAR ENTRADES
