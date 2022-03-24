@@ -8,7 +8,7 @@ $(document).ready(function() {
     $('.stadistics').hide();
     $('#task_result').hide();
     let edit = false;
-    var backup = false;
+    var bd = 'comandes';
     var order = 'ID';
     var direction = 'DESC';
     var limit = '10';
@@ -17,11 +17,15 @@ $(document).ready(function() {
 
     // Change DBs
     $('.witch_db_general').click(function() {
-        backup = false;
+        bd = 'comandes';
         fetchTasks();
     });
     $('.witch_db_backup').click(function() {
-        backup = true;
+        bd = 'backup';
+        fetchTasks();
+    });
+    $('.witch_db_all').click(function() {
+        bd = 'totes';
         fetchTasks();
     });
 
@@ -151,8 +155,10 @@ $(document).ready(function() {
 
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit, order, direction) {
-        let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
+        // let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
         if (bd == 'comandes') url = 'API.php?viewDB';
+        if (bd == 'backup') url = 'API.php?viewBackupDB';
+        if (bd == 'totes') url = 'API.php?viewBothDB';
         $.post(url, { limit, order, direction }, function(response) {
             let tasks = JSON.parse(response);
             let template = '';
@@ -173,7 +179,7 @@ $(document).ready(function() {
                     <td>${task.USER} (${task.ADDED})</td>
         
                     <td> <button class="button_delete">Delete</button></td>`;
-                if (backup == true) {
+                if (bd == 'backup') {
                     template += `
 
                     <td> <button class="button_backup">Backup</button></td>
@@ -188,13 +194,16 @@ $(document).ready(function() {
 
     // ESBORRAR ENTRADES
     $(document).on('click', '.button_delete', function() {
-        let advice = backup === false ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
+        let advice = bd === 'backup' ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
         if (confirm(advice)) {
             let element = $(this)[0].parentElement.parentElement;
             let id = $(element).attr('task_id');
-            let db = backup === false ? 'pedidos' : 'backup';
-            console.log(id + db);
-            $.post('API.php?deleteFromDB', { 'id': id, 'db': db }, function(response) {
+            if (bd == 'comandes') url = 'API.php?viewDB';
+            if (bd == 'backup') url = 'API.php?viewBackupDB';
+            if (bd == 'totes') url = 'API.php?viewBothDB';
+
+            console.log(id + bd);
+            $.post('API.php?deleteFromDB', { 'id': id, 'db': bd }, function(response) {
                 console.log(response)
                 fetchTasks(limit, order, direction);
             });
@@ -206,7 +215,7 @@ $(document).ready(function() {
         let element = $(this)[0].parentElement.parentElement;
         let id = $(element).attr('task_id');
         $.post('API.php?BackupRow', { 'id': id }, function(response) {
-            backup = false;
+            bd = 'comandes';
             fetchTasks(limit, order, direction);
         });
 
