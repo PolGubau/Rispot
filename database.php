@@ -1,9 +1,9 @@
 <?php
-$_host = 'localhost';
+$_host = '127.0.0.1';
 $_user = 'root';
 $_password = '';
 $_table = 'pau';
-//Localhost Update
+
 $connection = mysqli_connect(
     "$_host",
     "$_user",

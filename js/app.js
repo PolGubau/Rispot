@@ -1,3 +1,4 @@
+import "jquery.js";
 $(document).ready(function() {
     // https://phpmyadmin.alwaysdata.com/phpmyadmin/index.php?route=/&route=%2F&lang=en 
     // host: mysql-database-sc.alwaysdata.net 
@@ -8,31 +9,37 @@ $(document).ready(function() {
     $('.stadistics').hide();
     $('#task_result').hide();
     let edit = false;
-    var bd = 'comandes';
+    var table = 'pedidos';
+    var table2 = '';
     var order = 'ID';
     var direction = 'DESC';
     var limit = '10';
 
-
+    const tema_color = 3;
+    fetchTasks(limit, order, direction, table, table2);
 
     // Change DBs
     $('.witch_db_general').click(function() {
-        bd = 'comandes';
-        fetchTasks();
+        table = 'pedidos';
+        table2 = '';
+
+        fetchTasks(limit, order, direction, table, table2);
     });
     $('.witch_db_backup').click(function() {
-        bd = 'backup';
-        fetchTasks();
+        table = 'backup';
+        table2 = '';
+
+        fetchTasks(limit, order, direction, table, table2);
     });
     $('.witch_db_all').click(function() {
-        bd = 'totes';
-        fetchTasks();
+        table = 'pedidos';
+        table2 = 'backup';
+        fetchTasks(limit, order, direction, table, table2);
     });
 
 
 
-    const tema_color = 3;
-    fetchTasks();
+
 
     // BUSCAR A LA LUPA
     $('#search').keyup(function(e) {
@@ -154,12 +161,11 @@ $(document).ready(function() {
 
 
     //IMPRIMIR LES ENTRADES
-    function fetchTasks(limit, order, direction) {
-        // let url = backup === false ? 'API.php?viewDB' : 'API.php?viewBackupDB';
-        if (bd == 'comandes') url = 'API.php?viewDB';
-        if (bd == 'backup') url = 'API.php?viewBackupDB';
-        if (bd == 'totes') url = 'API.php?viewBothDB';
-        $.post(url, { limit, order, direction }, function(response) {
+    function fetchTasks(limit, order, direction, table, table2) {
+        url = 'API.php?viewDB';
+        console.log('1: ' + table + '. 2: ' + table2)
+        $.post(url, { table, limit, order, direction, table2 }, function(response) {
+            console.log(response);
             let tasks = JSON.parse(response);
             let template = '';
             tasks.forEach(task => {
@@ -179,7 +185,7 @@ $(document).ready(function() {
                     <td>${task.USER} (${task.ADDED})</td>
         
                     <td> <button class="button_delete">Delete</button></td>`;
-                if (bd == 'backup') {
+                if (table == 'backup') {
                     template += `
 
                     <td> <button class="button_backup">Backup</button></td>
@@ -194,16 +200,14 @@ $(document).ready(function() {
 
     // ESBORRAR ENTRADES
     $(document).on('click', '.button_delete', function() {
-        let advice = bd === 'backup' ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
+        let advice = table === 'backup' ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
         if (confirm(advice)) {
             let element = $(this)[0].parentElement.parentElement;
             let id = $(element).attr('task_id');
-            if (bd == 'comandes') url = 'API.php?viewDB';
-            if (bd == 'backup') url = 'API.php?viewBackupDB';
-            if (bd == 'totes') url = 'API.php?viewBothDB';
 
-            console.log(id + bd);
-            $.post('API.php?deleteFromDB', { 'id': id, 'db': bd }, function(response) {
+
+            console.log(id + table);
+            $.post('API.php?deleteFromDB', { 'id': id, 'table': table }, function(response) {
                 console.log(response)
                 fetchTasks(limit, order, direction);
             });
@@ -215,7 +219,7 @@ $(document).ready(function() {
         let element = $(this)[0].parentElement.parentElement;
         let id = $(element).attr('task_id');
         $.post('API.php?BackupRow', { 'id': id }, function(response) {
-            bd = 'comandes';
+            table = 'pedidos';
             fetchTasks(limit, order, direction);
         });
 

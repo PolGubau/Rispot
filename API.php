@@ -1,6 +1,7 @@
 <?php
 include('database.php');
 session_start();
+
 // Returns a JSON array with the values of a row from the DB
 if (isset($_REQUEST['valorize'])) {
     if (isset($_POST['id'])) {
@@ -43,8 +44,8 @@ if (isset($_REQUEST['deleteFromDB'])) {
 
     if (isset($_POST['id'])) {
         $id = intval($_POST['id']);
-        $db = $_POST['db'];
-        $query = "DELETE FROM $db WHERE ID= $id";
+        $table = $_POST['table'];
+        $query = "DELETE FROM $table WHERE ID= $id";
         $result = mysqli_query($connection, $query);
 
         if (!$result) die('QE' . mysqli_errno($connection));
@@ -174,26 +175,28 @@ if (isset($_REQUEST['searchInDB'])) {
 
 // Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
+    // Choosing DBS
+    $table =  isset($_POST['table']) ? $_POST['table'] : 'pedidos';
+    $table2 = isset($_POST['table2']) ? $_POST['table2'] : 'backup';
 
-    if (!isset($_POST['limit'])) {
-        $limit = 10;
-    } else ($limit = $_POST['limit']);
 
-    if (!isset($_POST['order'])) {
-        $order = 'ID';
+    // Presets
+    $limit =  isset($_POST['limit']) ? $_POST['limit'] : 10;
+    $order =  isset($_POST['order']) ? $_POST['order'] : 'ID';
+    $direction =  isset($_POST['direction']) ? $_POST['direction'] : 'DESC';
+
+
+
+
+    if ($table2 != '') {
+        $query =  "SELECT * from $table1 UNION ALL SELECT * FROM $table2 ORDER BY $order $direction LIMIT $limit";
     } else {
-        $order = $_POST['order'];
+        $query = "SELECT * FROM $table ORDER BY $order $direction LIMIT $limit";
     }
 
-    if (!isset($_POST['direction'])) {
-        $direction = 'DESC';
-    } else {
-        $direction = $_POST['direction'];
-    }
 
 
 
-    $query = "SELECT * FROM pedidos ORDER BY $order $direction LIMIT $limit";
     $result = mysqli_query($connection, $query);
 
     if (!$result) {
@@ -224,58 +227,7 @@ if (isset($_REQUEST['viewDB'])) {
     $json_string = json_encode($json);
     echo $json_string;
 }
-// View backup Database
-if (isset($_REQUEST['viewBackupDB'])) {
 
-    if (!isset($_POST['limit'])) {
-        $limit = 10;
-    } else ($limit = $_POST['limit']);
-
-    if (!isset($_POST['order'])) {
-        $order = 'ID';
-    } else {
-        $order = $_POST['order'];
-    }
-
-    if (!isset($_POST['direction'])) {
-        $direction = 'DESC';
-    } else {
-        $direction = $_POST['direction'];
-    }
-
-
-
-    $query = "SELECT * FROM backup ORDER BY $order $direction LIMIT $limit";
-    $result = mysqli_query($connection, $query);
-
-    if (!$result) {
-        die('Query Error ' . mysqli_errno($connection));
-    }
-
-    $json = array();
-    while ($row = mysqli_fetch_array($result)) {
-        $json[] = array(
-            'ID' => $row['ID'],
-            'NUMBER' => $row['NUMBER'],
-            'PRICE' => $row['PRICE'],
-            'COUNTRY' => $row['COUNTRY'],
-            'CP' => $row['CP'],
-            'DATEHOUR' => $row['DATEHOUR'],
-            'DATE' => $row['DATE'],
-            'HOUR' => $row['HOUR'],
-            'HOURAPROX' => $row['HOURAPROX'],
-            'MONTH' => $row['MONTH'],
-            'WEEKDAY' => $row['WEEKDAY'],
-            'ASIN' => $row['ASIN'],
-            'USER' => $row['USER'],
-            'ADDED' => $row['ADDED'],
-
-        );
-    };
-
-    $json_string = json_encode($json);
-    echo $json_string;
-}
 // Backup a Row
 if (isset($_REQUEST['BackupRow'])) {
     $id = $_POST['id'];
@@ -283,5 +235,4 @@ if (isset($_REQUEST['BackupRow'])) {
     $result = mysqli_query($connection, $query);
     $query = "DELETE FROM backup WHERE ID = $id";
     $result = mysqli_query($connection, $query);
-    
 }
