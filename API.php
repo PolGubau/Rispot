@@ -189,7 +189,7 @@ if (isset($_REQUEST['viewDB'])) {
 
 
     if ($table2 != '') {
-        $query =  "SELECT * from $table1 UNION ALL SELECT * FROM $table2 ORDER BY $order $direction LIMIT $limit";
+        $query =  "SELECT * from $table UNION ALL SELECT * FROM $table2 ORDER BY $order $direction LIMIT $limit";
     } else {
         $query = "SELECT * FROM $table ORDER BY $order $direction LIMIT $limit";
     }
