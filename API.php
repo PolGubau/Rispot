@@ -130,11 +130,11 @@ if (isset($_REQUEST['upload'])) {
 
 // Searchs into de DB
 if (isset($_REQUEST['searchInDB'])) {
-
+    $table =  isset($_POST['table']) ? $_POST['table'] : 'pedidos';
     $search = $_POST['search'];
     if (!empty($search)) {
 
-        $query = "SELECT * FROM pedidos WHERE 
+        $query = "SELECT * FROM $table WHERE 
             ID LIKE '$search%' OR 
             NUMBER LIKE '$search%' OR 
             PRICE LIKE '$search%' OR 

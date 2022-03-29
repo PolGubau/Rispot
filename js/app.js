@@ -1,3 +1,5 @@
+document.write('<script src="./js/functions.js"><\/script>');
+
 $(document).ready(function () {
     // https://phpmyadmin.alwaysdata.com/phpmyadmin/index.php?route=/&route=%2F&lang=en 
     // host: mysql-database-sc.alwaysdata.net 
@@ -38,10 +40,7 @@ $(document).ready(function () {
 
 
 
-
-
-    // BUSCAR A LA LUPA
-    $('#search').keyup(function (e) {
+    $('#search').keyup(function (e, table) {
 
         if ($('#search').val() == '') {
             $('#task_result').hide();
@@ -50,11 +49,12 @@ $(document).ready(function () {
         };
         if ($('#search').val()) {
             const search = $('#search').val();
-
+            if (search.includes("€")){alert('Recorda buscar els preus sense el €')}
+            if (search.includes("Pol")){alert(':)')}
             $.ajax({
                 url: 'API.php?searchInDB',
                 type: 'POST',
-                data: { search },
+                data: { search, table },
                 success: function (response) {
 
                     let tasks = JSON.parse(response);
@@ -76,9 +76,9 @@ $(document).ready(function () {
                     </tr>`;
                     tasks.forEach(task => {
                         template += `
-                        <tr class="row" task_id="${task.ID}">
+                        <tr class="row searched" task_id="${task.ID}">
                         <td class="searched"> ${task.ID}</td>
-                        <td><a href='#' class="nom_entrada"> ${task.NUMBER}</a> </td>
+                        <td><a href='#' class="searched nom_entrada"> ${task.NUMBER}</a> </td>
                         <td class="searched"> ${task.PRICE}€</td>
                         <td class="searched"> ${task.COUNTRY}</td>
                         <td class="searched"> ${task.CP}</td>
@@ -95,16 +95,15 @@ $(document).ready(function () {
                     $('#list_written').html(template);
                     $('#task_result').show();
 
+                    $('td.searched:contains(' + search + ')').each(function () {
+                        // $(this).css("background-color", "yellow");
+                        $(this).addClass("finded");
+                        console.log('Y: ' + this.text)
+                    });
+
                 }
 
             });
-            $('.searched:contains(' + search + ')').each(function () {
-                $(this).css("background-color", "yellow");
-            });
-
-
-
-
         }
 
     })
@@ -161,6 +160,7 @@ $(document).ready(function () {
 
     //IMPRIMIR LES ENTRADES
     function fetchTasks(limit, order, direction, table, table2) {
+        console.log('Refreshed');
         url = 'API.php?viewDB';
         console.log('1: ' + table + '. 2: ' + table2)
         $.post(url, { table, limit, order, direction, table2 }, function (response) {
@@ -205,7 +205,7 @@ $(document).ready(function () {
             let id = $(element).attr('task_id');
 
 
-            console.log('Delted '+id +'. From '+ table);
+            console.log('Delted ' + id + '. From ' + table);
             $.post('API.php?deleteFromDB', { 'id': id, 'table': table }, function (response) {
                 console.log(response)
                 fetchTasks(limit, order, direction, table, table2);
