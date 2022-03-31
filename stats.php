@@ -1,5 +1,5 @@
 <?php
-include('database.php');
+include('./DB/database.php');
 $query_total = "SELECT * FROM pedidos";
 $result_total = mysqli_query($connection, $query_total);
 if (!$result_total) {

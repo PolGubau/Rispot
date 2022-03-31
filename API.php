@@ -1,6 +1,12 @@
 <?php
-include('database.php');
+require('./DB/database.php');
 session_start();
+
+$login=true;
+if (!isset($_SESSION['username'])) {
+    $login=false;
+}
+
 
 // Returns a JSON array with the values of a row from the DB
 if (isset($_REQUEST['valorize'])) {
@@ -67,7 +73,8 @@ if (isset($_REQUEST['addToDB'])) {
         $Mes = $_POST['Mes'];
         $Dia = $_POST['Dia'];
         $Asin = $_POST['asin'];
-        $User = $_user;
+        $User = $_SESSION['username'];
+        // $User = $_user;
         $Added = Date('D, d M Y H:i');
 
         $data = $fecha . ' ' . $Hora;
@@ -99,7 +106,6 @@ if (isset($_REQUEST['addToDB'])) {
 if (isset($_REQUEST['upload'])) {
 
     $id = $_POST['id'];
-
     $numero = $_POST['numero'];
     $precio = $_POST['precio'];
     $pais = $_POST['pais'];
@@ -108,6 +114,7 @@ if (isset($_REQUEST['upload'])) {
     $Hora = $_POST['Hora'];
     $Mes = $_POST['Mes'];
     $Dia = $_POST['Dia'];
+    $asin = $_POST['asin'];
 
     $data = $fecha . ' ' . $Hora;
 
@@ -121,7 +128,7 @@ if (isset($_REQUEST['upload'])) {
     if ($Horaaprox > 23) $Horaaprox = 0;
 
 
-    $query = "UPDATE `pedidos` SET `NUMBER`='$numero',`PRICE`=$precio,`COUNTRY`='$pais',`CP`='$CP',`DATEHOUR`='$data',`DATE`='$fecha',`HOUR`='$Hora',`HOURAPROX`=$Horaaprox,`MONTH`='$Mes',`WEEKDAY`='$Dia' WHERE 'ID'= $id";
+    $query = "UPDATE `pedidos` SET `NUMBER`='$numero',`PRICE`=$precio,`COUNTRY`='$pais',`CP`='$CP',`DATEHOUR`='$data',`DATE`='$fecha',`HOUR`='$Hora',`HOURAPROX`=$Horaaprox,`MONTH`='$Mes',`WEEKDAY`='$Dia',`Asin`='$asin' WHERE 'ID'= $id";
 
     $result = mysqli_query($connection, $query);
 
@@ -175,10 +182,16 @@ if (isset($_REQUEST['searchInDB'])) {
 
 // Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
+//     if (!isset($_SESSION['username'])) {
+//         // header('Location:login.php');
+//         // echo 'No_login';
+//         $login=false;
+ 
+//    }
+    
     // Choosing DBS
     $table =  isset($_POST['table']) ? $_POST['table'] : 'pedidos';
     $table2 = isset($_POST['table2']) ? $_POST['table2'] : 'backup';
-
 
     // Presets
     $limit =  isset($_POST['limit']) ? $_POST['limit'] : 10;
@@ -186,14 +199,11 @@ if (isset($_REQUEST['viewDB'])) {
     $direction =  isset($_POST['direction']) ? $_POST['direction'] : 'DESC';
 
 
-
-
     if ($table2 != '') {
         $query =  "SELECT * from $table UNION ALL SELECT * FROM $table2 ORDER BY $order $direction LIMIT $limit";
     } else {
         $query = "SELECT * FROM $table ORDER BY $order $direction LIMIT $limit";
     }
-
 
 
 
@@ -225,7 +235,7 @@ if (isset($_REQUEST['viewDB'])) {
     };
 
     $json_string = json_encode($json);
-    echo $json_string;
+    if($login!=false)echo $json_string;
 }
 
 // Backup a Row
@@ -235,4 +245,9 @@ if (isset($_REQUEST['BackupRow'])) {
     $result = mysqli_query($connection, $query);
     $query = "DELETE FROM backup WHERE ID = $id";
     $result = mysqli_query($connection, $query);
+}
+// Backup a Row
+if (isset($_REQUEST['closeSession'])) {
+    session_destroy();
+    header('Location: login.php');
 }

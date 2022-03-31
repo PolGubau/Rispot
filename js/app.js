@@ -15,6 +15,16 @@ $(document).ready(function () {
     var order = 'ID';
     var direction = 'DESC';
     var limit = '10';
+    
+    
+    
+    // functions
+    function searchScreen(search) {
+        $('td.searched:contains(' + search + ')').each(function () {
+            $(this).addClass("finded");
+        });
+    };    
+    
 
     const tema_color = 3;
     fetchTasks(limit, order, direction, table, table2);
@@ -37,8 +47,7 @@ $(document).ready(function () {
         table2 = 'backup';
         fetchTasks(limit, order, direction, table, table2);
     });
-
-
+    
 
     $('#search').keyup(function (e, table) {
 
@@ -49,8 +58,8 @@ $(document).ready(function () {
         };
         if ($('#search').val()) {
             const search = $('#search').val();
-            if (search.includes("€")){alert('Recorda buscar els preus sense el €')}
-            if (search.includes("Pol")){alert(':)')}
+            if (search.includes("€")) { alert('Recorda buscar els preus sense el €') }
+            if (search.includes("Pol")) { alert(':)') }
             $.ajax({
                 url: 'API.php?searchInDB',
                 type: 'POST',
@@ -94,12 +103,10 @@ $(document).ready(function () {
                     })
                     $('#list_written').html(template);
                     $('#task_result').show();
-
-                    $('td.searched:contains(' + search + ')').each(function () {
-                        // $(this).css("background-color", "yellow");
-                        $(this).addClass("finded");
-                        console.log('Y: ' + this.text)
-                    });
+                    searchScreen(search);
+                    // $('td.searched:contains(' + search + ')').each(function () {
+                    //     $(this).addClass("finded");
+                    // });
 
                 }
 
@@ -164,7 +171,10 @@ $(document).ready(function () {
         url = 'API.php?viewDB';
         console.log('1: ' + table + '. 2: ' + table2)
         $.post(url, { table, limit, order, direction, table2 }, function (response) {
-            // console.log(response);
+            if(response==''){                
+                window.location='./login.php';
+            }
+            // console.log('Resposta: '+response);
             let tasks = JSON.parse(response);
             let template = '';
             tasks.forEach(task => {
