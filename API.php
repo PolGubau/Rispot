@@ -2,9 +2,9 @@
 require('./DB/database.php');
 session_start();
 
-$login=true;
+$login = true;
 if (!isset($_SESSION['username'])) {
-    $login=false;
+    $login = false;
 }
 
 
@@ -62,19 +62,19 @@ if (isset($_REQUEST['deleteFromDB'])) {
 // Adds row to the DB
 if (isset($_REQUEST['addToDB'])) {
 
-    if (isset($_POST['numero'])) {
-
-        $numero = $_POST['numero'];
-        $precio = $_POST['precio'];
-        $pais = $_POST['pais'];
+    if (isset($_POST['NUMBER'])) {
+       
+        
+        $numero = $_POST['NUMBER'];
+        $precio = $_POST['PRICE'];
+        $pais = $_POST['COUNTRY'];
         $CP = $_POST['CP'];
-        $fecha = $_POST['fecha'];
-        $Hora = $_POST['Hora'];
-        $Mes = $_POST['Mes'];
-        $Dia = $_POST['Dia'];
-        $Asin = $_POST['asin'];
+        $fecha = $_POST['DATE'];
+        $Hora = $_POST['HOUR'];
+        $Mes = $_POST['MONTH'];
+        $Dia = $_POST['WEEKDAY'];
+        $Asin = $_POST['ASIN'];
         $User = $_SESSION['username'];
-        // $User = $_user;
         $Added = Date('D, d M Y H:i');
 
         $data = $fecha . ' ' . $Hora;
@@ -105,34 +105,53 @@ if (isset($_REQUEST['addToDB'])) {
 // Uploads a DB row
 if (isset($_REQUEST['upload'])) {
 
-    $id = $_POST['id'];
-    $numero = $_POST['numero'];
-    $precio = $_POST['precio'];
-    $pais = $_POST['pais'];
+    $id = $_POST['ID'];
+    $numero = $_POST['NUMBER'];
+    $precio = $_POST['PRICE'];
+    $pais = $_POST['COUNTRY'];
     $CP = $_POST['CP'];
-    $fecha = $_POST['fecha'];
-    $Hora = $_POST['Hora'];
-    $Mes = $_POST['Mes'];
-    $Dia = $_POST['Dia'];
-    $asin = $_POST['asin'];
+    $fecha = $_POST['DATE'];
+    $Hora = $_POST['HOUR'];
+    $Mes = $_POST['MONTH'];
+    $Dia = $_POST['WEEKDAY'];
+    $asin = $_POST['ASIN'];
+    $User = $_SESSION['username'];
 
+
+    $Added = Date('D, d M Y H:i');
     $data = $fecha . ' ' . $Hora;
-
-
     $Horaaprox = substr($Hora, 0, 2);
     $minutos = substr($Hora, 3, 5);
-
     intval($Horaaprox);
     if (intval($minutos) > 30) $Horaaprox++;
 
     if ($Horaaprox > 23) $Horaaprox = 0;
 
+    if (strlen($Horaaprox) == 1) $Horaaprox = '0' + $Horaaprox;
 
-    $query = "UPDATE `pedidos` SET `NUMBER`='$numero',`PRICE`=$precio,`COUNTRY`='$pais',`CP`='$CP',`DATEHOUR`='$data',`DATE`='$fecha',`HOUR`='$Hora',`HOURAPROX`=$Horaaprox,`MONTH`='$Mes',`WEEKDAY`='$Dia',`Asin`='$asin' WHERE 'ID'= $id";
+    $query = "UPDATE
+    `pedidos`
+SET
+    `NUMBER` = '$numero',
+    `PRICE` = $precio,
+    `COUNTRY` = '$pais',
+    `CP` = '$CP',
+    `DATEHOUR` = '$fecha',
+    `DATE` = '$fecha',
+    `HOUR` = '$Hora',
+    `HOURAPROX` = '$Horaaprox',
+    `MONTH` = '$Mes',
+    `WEEKDAY` = '$Dia',
+    `ASIN` = '$asin',
+    `USER` = '$User',
+    `ADDED` = '$Added'
+    WHERE
+    `ID` = '$id'";
 
     $result = mysqli_query($connection, $query);
 
     if (!$result) die('Query Error ' . mysqli_errno($connection));
+    echo 'Updated by ' . $User . '. On ' . $id;
 }
 
 // Searchs into de DB
@@ -182,13 +201,13 @@ if (isset($_REQUEST['searchInDB'])) {
 
 // Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
-//     if (!isset($_SESSION['username'])) {
-//         // header('Location:login.php');
-//         // echo 'No_login';
-//         $login=false;
- 
-//    }
-    
+    //     if (!isset($_SESSION['username'])) {
+    //         // header('Location:login.php');
+    //         // echo 'No_login';
+    //         $login=false;
+
+    //    }
+
     // Choosing DBS
     $table =  isset($_POST['table']) ? $_POST['table'] : 'pedidos';
     $table2 = isset($_POST['table2']) ? $_POST['table2'] : 'backup';
@@ -235,7 +254,7 @@ if (isset($_REQUEST['viewDB'])) {
     };
 
     $json_string = json_encode($json);
-    if($login!=false)echo $json_string;
+    if ($login != false) echo $json_string;
 }
 
 // Backup a Row

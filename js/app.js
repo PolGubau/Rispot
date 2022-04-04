@@ -1,6 +1,6 @@
 document.write('<script src="./js/functions.js"><\/script>');
 
-$(document).ready(function () {
+$(document).ready(function() {
     // https://phpmyadmin.alwaysdata.com/phpmyadmin/index.php?route=/&route=%2F&lang=en 
     // host: mysql-database-sc.alwaysdata.net 
 
@@ -15,41 +15,41 @@ $(document).ready(function () {
     var order = 'ID';
     var direction = 'DESC';
     var limit = '10';
-    
-    
-    
+
+
+
     // functions
     function searchScreen(search) {
-        $('td.searched:contains(' + search + ')').each(function () {
+        $('td.searched:contains(' + search + ')').each(function() {
             $(this).addClass("finded");
         });
-    };    
-    
+    };
+
 
     const tema_color = 3;
     fetchTasks(limit, order, direction, table, table2);
 
     // Change DBs
-    $('.witch_db_general').click(function () {
+    $('.witch_db_general').click(function() {
         table = 'pedidos';
         table2 = '';
 
         fetchTasks(limit, order, direction, table, table2);
     });
-    $('.witch_db_backup').click(function () {
+    $('.witch_db_backup').click(function() {
         table = 'backup';
         table2 = '';
 
         fetchTasks(limit, order, direction, table, table2);
     });
-    $('.witch_db_all').click(function () {
+    $('.witch_db_all').click(function() {
         table = 'pedidos';
         table2 = 'backup';
         fetchTasks(limit, order, direction, table, table2);
     });
-    
 
-    $('#search').keyup(function (e, table) {
+    // Buscar lupa
+    $('#search').keyup(function(e, table) {
 
         if ($('#search').val() == '') {
             $('#task_result').hide();
@@ -64,7 +64,7 @@ $(document).ready(function () {
                 url: 'API.php?searchInDB',
                 type: 'POST',
                 data: { search, table },
-                success: function (response) {
+                success: function(response) {
 
                     let tasks = JSON.parse(response);
 
@@ -116,24 +116,27 @@ $(document).ready(function () {
     })
 
     //CREAR UNA NOVA ENTRADA O EDITAR UNA EXISTENT
-    $('#task_form').submit(function (e) {
+    $('#task_form').submit(function(e) {
+
         const postData = {
-            id: $('#task_Id').val(),
-            numero: $('#numero').val(),
-            precio: $('#precio').val(),
-            pais: $('#pais').val(),
-            CP: $('#CP').val(),
-            fecha: $('#fecha').val(),
-            Hora: $('#Hora').val(),
-            Mes: $('#mes').val(),
-            Dia: $('#dia').val(),
-            asin: $('#asin').val()
+            'ID': $('#task_ID').val(),
+            'NUMBER': $('#numero').val(),
+            'PRICE': $('#precio').val(),
+            'COUNTRY': $('#pais').val(),
+            'CP': $('#CP').val(),
+            'DATE': $('#fecha').val(),
+            'HOUR': $('#Hora').val(),
+            'MONTH': $('#mes').val(),
+            'WEEKDAY': $('#dia').val(),
+            'ASIN': $('#asin').val()
         };
+
 
         let url = edit === false ? 'API.php?addToDB' : 'API.php?upload'
 
 
-        $.post(url, postData, function (response) {
+        $.post(url, postData, function(r) {
+            alert(r)
             fetchTasks(limit, order, direction, table, table2);
             $('#task_form').trigger('reset');
         });
@@ -147,13 +150,13 @@ $(document).ready(function () {
     });
 
     //POSAR UN LIMIT
-    $('#limit').keyup(function (e) {
+    $('#limit').keyup(function(e) {
         const limit = $('#limit').val();
         fetchTasks(limit, order, direction, table, table2);
     });
 
     // Posar order y direcció
-    $(document).on('click', '.header_row', function (e) {
+    $(document).on('click', '.header_row', function(e) {
         $('.header_row').removeClass("theader_active");
         $(e.target.tagName).not(this).removeClass("theader_active");
         $(this).addClass("theader_active");
@@ -165,14 +168,14 @@ $(document).ready(function () {
     });
 
 
-    //IMPRIMIR LES ENTRADES
+    //!IMPRIMIR LES ENTRADES
     function fetchTasks(limit, order, direction, table, table2) {
-        console.log('Refreshed');
+        // console.log('Refreshed');
         url = 'API.php?viewDB';
-        console.log('1: ' + table + '. 2: ' + table2)
-        $.post(url, { table, limit, order, direction, table2 }, function (response) {
-            if(response==''){                
-                window.location='./login.php';
+        // console.log('1: ' + table + '. 2: ' + table2)
+        $.post(url, { table, limit, order, direction, table2 }, function(response) {
+            if (response == '') {
+                window.location = './login.php';
             }
             // console.log('Resposta: '+response);
             let tasks = JSON.parse(response);
@@ -208,15 +211,15 @@ $(document).ready(function () {
 
 
     // ESBORRAR ENTRADES
-    $(document).on('click', '.button_delete', function () {
+    $(document).on('click', '.button_delete', function() {
         let advice = table === 'backup' ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
         if (confirm(advice)) {
             let element = $(this)[0].parentElement.parentElement;
             let id = $(element).attr('task_id');
 
 
-            console.log('Delted ' + id + '. From ' + table);
-            $.post('API.php?deleteFromDB', { 'id': id, 'table': table }, function (response) {
+            console.log('Deleted ' + id + '. From ' + table);
+            $.post('API.php?deleteFromDB', { 'id': id, 'table': table }, function(response) {
                 console.log(response)
                 fetchTasks(limit, order, direction, table, table2);
             });
@@ -224,10 +227,10 @@ $(document).ready(function () {
     });
 
     // Fer backup de les entrades
-    $(document).on('click', '.button_backup', function () {
+    $(document).on('click', '.button_backup', function() {
         let element = $(this)[0].parentElement.parentElement;
         let id = $(element).attr('task_id');
-        $.post('API.php?BackupRow', { 'id': id }, function (response) {
+        $.post('API.php?BackupRow', { 'id': id }, function(response) {
             console.log('Did a Backup ' + response);
             table = 'pedidos';
             fetchTasks(limit, order, direction, table, table2);
@@ -236,31 +239,33 @@ $(document).ready(function () {
     });
 
     //EDITAR ENTRADES
-    $(document).on('click', '.nom_entrada', function () {
+    $(document).on('click', '.nom_entrada', function() {
+        // Agafem el seu ID
         let element = $(this)[0].parentElement.parentElement;
         let id = $(element).attr('task_id');
 
-        $.post('API.php?valorize', { id }, function (response) {
+        // Passem a la api el seu ID i esperem la resposta.
+        $.post('API.php?valorize', { id }, function(response) {
             const row = JSON.parse(response);
-            console.log(row);
-            $('#numero').val(row[0].numero);
-            $('#precio').val(row[0].precio);
-            $('#pais').val(row[0].pais);
+            // Agafem els camps de la BD i els actualitzem pels nous.
+            $('#task_ID').val(row[0].ID);
+            $('#numero').val(row[0].NUMBER);
+            $('#precio').val(row[0].PRICE);
+            $('#pais').val(row[0].COUNTRY);
             $('#CP').val(row[0].CP);
-            $('#data').val(row[0].data);
-            $('#fecha').val(row[0].fecha);
-            $('#Hora').val(row[0].Hora);
-            $('#Horaaprox').val(row[0].Horaaprox);
-            $('#mes').val(row[0].mes);
-            $('#dia').val(row[0].dia);
-            $('#asin').val(row[0].asin);
+            $('#fecha').val(row[0].DATE);
+            $('#Hora').val(row[0].HOUR);
+            $('#Horaaprox').val(row[0].HOURAPROX);
+            $('#mes').val(row[0].MONTH);
+            $('#dia').val(row[0].WEEKDAY);
+            $('#asin').val(row[0].ASIN);
             edit = true;
             $('#submit_create').text('Actualitzar');
         });
     });
 
     // Reload
-    $('.reloadSvg').click(function () {
+    $('.reloadSvg').click(function() {
         console.clear();
         $('.header_row').removeClass("theader_active");
         var $elem = $('.reloadSvg');
@@ -269,7 +274,7 @@ $(document).ready(function () {
         // (starts from `0` to `angle`), you can name it as you want
         $({ deg: 0 }).animate({ deg: angle }, {
             duration: 200,
-            step: function (now) {
+            step: function(now) {
                 // in the step-callback (that is fired each step of the animation),
                 // you can use the `now` paramter which contains the current
                 // animation-position (`0` up to `angle`)
@@ -288,7 +293,7 @@ $(document).ready(function () {
         $('#task_result').hide();
         $('#list_written').html('');
 
-        $.post('stats.php', {}, function (response) {
+        $.post('stats.php', {}, function(response) {
             let graphs = JSON.parse(response);
             graphs.forEach(data => {
 
@@ -353,7 +358,7 @@ $(document).ready(function () {
 
 
     // CANVIAR MÈTODES
-    $(document).on('click', '#verdatos', function () {
+    $(document).on('click', '#verdatos', function() {
         $('.dbs_filters').show();
         $('.table_tasks').show();
         $('.stadistics').hide();
@@ -363,7 +368,7 @@ $(document).ready(function () {
 
     });
 
-    $(document).on('click', '#verestadisticas', function () {
+    $(document).on('click', '#verestadisticas', function() {
         $('.table_tasks').hide();
         $('.stadistics').show();
         $('.dbs_filters').hide();
