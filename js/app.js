@@ -1,6 +1,7 @@
 document.write('<script src="./js/functions.js"><\/script>');
 
 $(document).ready(function () {
+    console.log('API works')
     // https://phpmyadmin.alwaysdata.com/phpmyadmin/index.php?route=/&route=%2F&lang=en 
     // host: mysql-database-sc.alwaysdata.net 
 
