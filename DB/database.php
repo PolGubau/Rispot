@@ -1,9 +1,9 @@
 <?php
 
-$_host = '127.0.0.1';
-$_user = 'root';
-$_password = '';
-$_table = 'pau';
+$_host = 'mysql-database-sc.alwaysdata.net';
+$_user = '259173_web';
+$_password = 'WwEeBb123456789';
+$_table = 'database-sc_main';
 
 $connection = mysqli_connect(
     "$_host",
