@@ -1,6 +1,6 @@
 document.write('<script src="./js/functions.js"><\/script>');
 
-$(document).ready(function() {
+$(document).ready(function () {
     // https://phpmyadmin.alwaysdata.com/phpmyadmin/index.php?route=/&route=%2F&lang=en 
     // host: mysql-database-sc.alwaysdata.net 
 
@@ -20,7 +20,7 @@ $(document).ready(function() {
 
     // functions
     function searchScreen(search) {
-        $('td.searched:contains(' + search + ')').each(function() {
+        $('td.searched:contains(' + search + ')').each(function () {
             $(this).addClass("finded");
         });
     };
@@ -30,26 +30,32 @@ $(document).ready(function() {
     fetchTasks(limit, order, direction, table, table2);
 
     // Change DBs
-    $('.witch_db_general').click(function() {
+    $('.witch_db_general').click(function () {
         table = 'pedidos';
         table2 = '';
 
         fetchTasks(limit, order, direction, table, table2);
     });
-    $('.witch_db_backup').click(function() {
+    $('.witch_db_backup').click(function () {
         table = 'backup';
         table2 = '';
 
         fetchTasks(limit, order, direction, table, table2);
     });
-    $('.witch_db_all').click(function() {
+    $('.witch_db_edited').click(function () {
+        table = 'updated';
+        table2 = '';
+
+        fetchTasks(limit, order, direction, table, table2);
+    });
+    $('.witch_db_all').click(function () {
         table = 'pedidos';
         table2 = 'backup';
         fetchTasks(limit, order, direction, table, table2);
     });
 
     // Buscar lupa
-    $('#search').keyup(function(e, table) {
+    $('#search').keyup(function (e, table) {
 
         if ($('#search').val() == '') {
             $('#task_result').hide();
@@ -64,7 +70,7 @@ $(document).ready(function() {
                 url: 'API.php?searchInDB',
                 type: 'POST',
                 data: { search, table },
-                success: function(response) {
+                success: function (response) {
 
                     let tasks = JSON.parse(response);
 
@@ -116,7 +122,7 @@ $(document).ready(function() {
     })
 
     //CREAR UNA NOVA ENTRADA O EDITAR UNA EXISTENT
-    $('#task_form').submit(function(e) {
+    $('#task_form').submit(function (e) {
 
         const postData = {
             'ID': $('#task_ID').val(),
@@ -135,7 +141,7 @@ $(document).ready(function() {
         let url = edit === false ? 'API.php?addToDB' : 'API.php?upload'
 
 
-        $.post(url, postData, function(r) {
+        $.post(url, postData, function (r) {
             alert(r)
             fetchTasks(limit, order, direction, table, table2);
             $('#task_form').trigger('reset');
@@ -150,13 +156,13 @@ $(document).ready(function() {
     });
 
     //POSAR UN LIMIT
-    $('#limit').keyup(function(e) {
+    $('#limit').keyup(function (e) {
         const limit = $('#limit').val();
         fetchTasks(limit, order, direction, table, table2);
     });
 
     // Posar order y direcció
-    $(document).on('click', '.header_row', function(e) {
+    $(document).on('click', '.header_row', function (e) {
         $('.header_row').removeClass("theader_active");
         $(e.target.tagName).not(this).removeClass("theader_active");
         $(this).addClass("theader_active");
@@ -173,13 +179,18 @@ $(document).ready(function() {
         // console.log('Refreshed');
         url = 'API.php?viewDB';
         // console.log('1: ' + table + '. 2: ' + table2)
-        $.post(url, { table, limit, order, direction, table2 }, function(response) {
+        $.post(url, { table, limit, order, direction, table2 }, function (response) {
             if (response == '') {
                 window.location = './login.php';
             }
             // console.log('Resposta: '+response);
             let tasks = JSON.parse(response);
             let template = '';
+            if (table == 'backup') {
+                template += `
+                <div class="truncate_box"> <button class="truncate_button">Delete all</button></div>
+                `;
+            }
             tasks.forEach(task => {
                 template += `
                     <tr class="row" task_id="${task.ID}">
@@ -190,7 +201,6 @@ $(document).ready(function() {
                     <td>${task.CP}</td>
                     <td>${task.DATE}</td>
                     <td>${task.HOUR}</td>
-                    <td>${task.HOURAPROX}</td>
                     <td>${task.MONTH}</td>
                     <td>${task.WEEKDAY}</td>
                     <td>${task.ASIN}</td>
@@ -211,7 +221,7 @@ $(document).ready(function() {
 
 
     // ESBORRAR ENTRADES
-    $(document).on('click', '.button_delete', function() {
+    $(document).on('click', '.button_delete', function () {
         let advice = table === 'backup' ? 'Are you sure you want to delete it?' : 'This action will delete this row forever (a lot of time)';
         if (confirm(advice)) {
             let element = $(this)[0].parentElement.parentElement;
@@ -219,7 +229,7 @@ $(document).ready(function() {
 
 
             console.log('Deleted ' + id + '. From ' + table);
-            $.post('API.php?deleteFromDB', { 'id': id, 'table': table }, function(response) {
+            $.post('API.php?deleteFromDB', { 'id': id, 'table': table }, function (response) {
                 console.log(response)
                 fetchTasks(limit, order, direction, table, table2);
             });
@@ -227,10 +237,22 @@ $(document).ready(function() {
     });
 
     // Fer backup de les entrades
-    $(document).on('click', '.button_backup', function() {
+    $(document).on('click', '.truncate_button', function () {
+        let alert = confirm('Are you sure? This will delete Backup table.');
+        if (alert) {
+            $.post('API.php?truncateBackup', {}, function (response) {
+                console.log('Truncated Backup File');
+                table = 'backup';
+                fetchTasks(limit, order, direction, table, table2);
+
+            });
+        };
+
+    });
+    $(document).on('click', '.button_backup', function () {
         let element = $(this)[0].parentElement.parentElement;
         let id = $(element).attr('task_id');
-        $.post('API.php?BackupRow', { 'id': id }, function(response) {
+        $.post('API.php?BackupRow', { 'id': id }, function (response) {
             console.log('Did a Backup ' + response);
             table = 'pedidos';
             fetchTasks(limit, order, direction, table, table2);
@@ -239,13 +261,13 @@ $(document).ready(function() {
     });
 
     //EDITAR ENTRADES
-    $(document).on('click', '.nom_entrada', function() {
+    $(document).on('click', '.nom_entrada', function () {
         // Agafem el seu ID
         let element = $(this)[0].parentElement.parentElement;
         let id = $(element).attr('task_id');
 
         // Passem a la api el seu ID i esperem la resposta.
-        $.post('API.php?valorize', { id }, function(response) {
+        $.post('API.php?valorize', { id }, function (response) {
             const row = JSON.parse(response);
             // Agafem els camps de la BD i els actualitzem pels nous.
             $('#task_ID').val(row[0].ID);
@@ -265,7 +287,7 @@ $(document).ready(function() {
     });
 
     // Reload
-    $('.reloadSvg').click(function() {
+    $('.reloadSvg').click(function () {
         console.clear();
         $('.header_row').removeClass("theader_active");
         var $elem = $('.reloadSvg');
@@ -274,7 +296,7 @@ $(document).ready(function() {
         // (starts from `0` to `angle`), you can name it as you want
         $({ deg: 0 }).animate({ deg: angle }, {
             duration: 200,
-            step: function(now) {
+            step: function (now) {
                 // in the step-callback (that is fired each step of the animation),
                 // you can use the `now` paramter which contains the current
                 // animation-position (`0` up to `angle`)
@@ -293,8 +315,10 @@ $(document).ready(function() {
         $('#task_result').hide();
         $('#list_written').html('');
 
-        $.post('stats.php', {}, function(response) {
+        $.post('stats.php', {}, function (response) {
             let graphs = JSON.parse(response);
+            // console.log(graphs)
+
             graphs.forEach(data => {
 
                 $('#D_weekdays').text(data.TOTAL);
@@ -303,49 +327,123 @@ $(document).ready(function() {
 
                 const weekdays = data.WEEKDAYS;
                 const months = data.MONTHS;
+                const asins = data.ASIN;
+
+
+
+                // MONTHS
+                var myChart = echarts.init(document.getElementById('grafWeek'));
+
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['Ventes']
+                    },
+                    xAxis: {
+                        data: Object.keys(weekdays)
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: 'Ventes',
+                            type: 'line',
+                            smooth: 'false',
+                            data: Object.values(weekdays)
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+
+                var myChart = echarts.init(document.getElementById('grafMonths'));
+
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['Ventes', 'Clients']
+                    },
+                    xAxis: {
+                        data: Object.keys(months)
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: 'Ventes',
+                            type: 'bar',
+                            smooth: 'true',
+                            data: Object.values(months)
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+                // 
+                // HORES
+                // 
                 const hours = data.HOURSAPROX;
-                var templatehours = '';
 
-                $('.Barres_weekday').html(
-                    '<div class="barra_WV" style="background-color: rgb(119,' + weekdays.Lunes + ' ,' + weekdays.Lunes * tema_color + ');width: ' + weekdays.Lunes + '%"><p>' + weekdays.Lunes + `</p></div>
-                    <div class="barra_WV" style="background-color: rgb(119,` + weekdays.Martes + ', ' + weekdays.Martes * tema_color + ');width: ' + weekdays.Martes + '%"><p>' + weekdays.Martes + `</p></div>
-                    <div class="barra_WV" style="background-color: rgb(119,` + weekdays.Miércoles + ', ' + weekdays.Miércoles * tema_color + ');width: ' + weekdays.Miércoles + '%"><p>' + weekdays.Miércoles + `</p></div>
-                    <div class="barra_WV" style="background-color: rgb(119,` + weekdays.Jueves + ', ' + weekdays.Jueves * tema_color + ');width: ' + weekdays.Jueves + '%"><p>' + weekdays.Jueves + `</p></div>
-                    <div class="barra_WV" style="background-color: rgb(119,` + weekdays.Viernes + ', ' + weekdays.Viernes * tema_color + ');width: ' + weekdays.Viernes + '%"><p>' + weekdays.Viernes + `</p></div>
-                    <div class="barra_WV" style="background-color: rgb(119,` + weekdays.Sábado + ', ' + weekdays.Sábado * tema_color + ');width: ' + weekdays.Sábado + '%"><p>' + weekdays.Sábado + `</p></div>
-                    <div class="barra_WV" style="background-color: rgb(119,` + weekdays.Domingo + ', ' + weekdays.Domingo * tema_color + ');width: ' + weekdays.Domingo + '%"><p>' + weekdays.Domingo + '</p></div>'
-                );
-                $('.Barres_month').html(
-                    `<div class="barra_WV" style="background-color: rgb(119,` + months.Enero + ' ,' + months.Enero * tema_color + ');width: ' + months.Enero + '%"><p>' + months.Enero + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Febrero + ' ,' + months.Febrero * tema_color + ');width: ' + months.Febrero + '%"><p>' + months.Febrero + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Marzo + ' ,' + months.Marzo * tema_color + ');width: ' + months.Marzo + '%"><p>' + months.Marzo + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Abril + ' ,' + months.Abril * tema_color + ');width: ' + months.Abril + '%"><p>' + months.Abril + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Mayo + ' ,' + months.Mayo * tema_color + ');width: ' + months.Mayo + '%"><p>' + months.Mayo + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Junio + ' ,' + months.Junio * tema_color + ');width: ' + months.Junio + '%"><p>' + months.Junio + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Julio + ' ,' + months.Julio * tema_color + ');width: ' + months.Julio + '%"><p>' + months.Julio + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Agosto + ' ,' + months.Agosto * tema_color + ');width: ' + months.Agosto + '%"><p>' + months.Agosto + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Septiembre + ' ,' + months.Septiembre * tema_color + ');width: ' + months.Septiembre + '%"><p>' + months.Septiembre + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Octubre + ' ,' + months.Octubre * tema_color + ');width: ' + months.Octubre + '%"><p>' + months.Octubre + `</p></div>
-                    
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Noviembre + ' ,' + months.Noviembre * tema_color + ');width: ' + months.Noviembre + '%"><p>' + months.Noviembre + `</p></div>
-                    
-                   
-                    <div class="barra_WV" style="background-color: rgb(119,` + months.Diciembre + ' ,' + months.Diciembre * tema_color + ');width: ' + months.Diciembre + '%"><p>' + months.Diciembre + `</p></div>`
-                );
 
-                for (hora in hours) {
-                    templatehours += '<div class="hourbox"><p>' + hora + '</p><p style="background-color: rgb(190, 138, ' + hours[hora] * 3.5 * tema_color + ')">' + hours[hora] + '</p></div>';
-                }
-                $('.Barres_hours').html('<div class="allhours">' + templatehours + '</div');
+                var myChart = echarts.init(document.getElementById('grafHours'));
+
+                // console.log(hours)
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['Ventes']
+                    },
+                    xAxis: {
+                        data: Object.keys(hours)
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: 'Ventes',
+                            type: 'bar',
+                            smooth: 'true',
+                            data: Object.values(hours)
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+
+                // IBANS
+
+                // console.log(asins);
+                var myChart = echarts.init(document.getElementById('grafASIN'));
+
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['Ventes Per IBAN']
+                    },
+                    xAxis: {
+                        data: Object.keys(asins)
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: 'Ventes Per IBAN',
+                            type: 'bar',
+                            data: Object.values(asins)
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+
 
 
             });
@@ -358,7 +456,7 @@ $(document).ready(function() {
 
 
     // CANVIAR MÈTODES
-    $(document).on('click', '#verdatos', function() {
+    $(document).on('click', '#verdatos', function () {
         $('.dbs_filters').show();
         $('.table_tasks').show();
         $('.stadistics').hide();
@@ -368,7 +466,7 @@ $(document).ready(function() {
 
     });
 
-    $(document).on('click', '#verestadisticas', function() {
+    $(document).on('click', '#verestadisticas', function () {
         $('.table_tasks').hide();
         $('.stadistics').show();
         $('.dbs_filters').hide();

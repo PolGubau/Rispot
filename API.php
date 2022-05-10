@@ -6,6 +6,9 @@ $login = true;
 if (!isset($_SESSION['username'])) {
     $login = false;
 }
+require('./dependences/inputs.php');
+
+
 
 
 // Returns a JSON array with the values of a row from the DB
@@ -22,6 +25,7 @@ if (isset($_REQUEST['valorize'])) {
         $json = array();
 
         while ($row = mysqli_fetch_array($result)) {
+
             $json[] = array(
                 'ID' => $row['ID'],
                 'NUMBER' => $row['NUMBER'],
@@ -31,7 +35,6 @@ if (isset($_REQUEST['valorize'])) {
                 'DATEHOUR' => $row['DATEHOUR'],
                 'DATE' => $row['DATE'],
                 'HOUR' => $row['HOUR'],
-                'HOURAPROX' => $row['HOURAPROX'],
                 'MONTH' => $row['MONTH'],
                 'WEEKDAY' => $row['WEEKDAY'],
                 'ASIN' => $row['ASIN'],
@@ -63,33 +66,23 @@ if (isset($_REQUEST['deleteFromDB'])) {
 if (isset($_REQUEST['addToDB'])) {
 
     if (isset($_POST['NUMBER'])) {
-       
-        
-        $numero = $_POST['NUMBER'];
-        $precio = $_POST['PRICE'];
-        $pais = $_POST['COUNTRY'];
-        $CP = $_POST['CP'];
-        $fecha = $_POST['DATE'];
-        $Hora = $_POST['HOUR'];
-        $Mes = $_POST['MONTH'];
-        $Dia = $_POST['WEEKDAY'];
-        $Asin = $_POST['ASIN'];
-        $User = $_SESSION['username'];
-        $Added = Date('D, d M Y H:i');
 
-        $data = $fecha . ' ' . $Hora;
-
-
-        $Horaaprox = substr($Hora, 0, 2);
-        $minutos = substr($Hora, 3, 5);
-        intval($Horaaprox);
-        if (intval($minutos) > 30) $Horaaprox++;
-
-        if ($Horaaprox > 23) $Horaaprox = 0;
-
-        if (strlen($Horaaprox == 1)) $Horaaprox = '0' + $Horaaprox;
-
-        $query = "INSERT INTO pedidos (NUMBER,PRICE,COUNTRY,CP,DATEHOUR,DATE,HOUR,HOURAPROX,MONTH, WEEKDAY,ASIN,USER,ADDED) VALUES ('$numero',$precio ,'$pais','$CP' ,'$data' ,'$fecha','$Hora','$Horaaprox','$Mes','$Dia','$Asin','$User','$Added')";
+        $row = inputs();
+        // qry
+        $query = "INSERT INTO pedidos (NUMBER,PRICE,COUNTRY,CP,DATEHOUR,DATE,HOUR,HOURAPROX,MONTH, WEEKDAY,ASIN,USER,ADDED) VALUES ('
+        $row[number]',
+        $row[price] ,
+        '$row[country]',
+        '$row[CP]' ,
+        '$row[datehour]' ,
+        '$row[date]',
+        '$row[hour]',
+        '$row[houraprox]',
+        '$row[month]',
+        '$row[weekday]',
+        '$row[asin]',
+        '$row[user]',
+        '$row[added]')";
 
         $result = mysqli_query($connection, $query);
 
@@ -104,54 +97,32 @@ if (isset($_REQUEST['addToDB'])) {
 
 // Uploads a DB row
 if (isset($_REQUEST['upload'])) {
-
     $id = $_POST['ID'];
-    $numero = $_POST['NUMBER'];
-    $precio = $_POST['PRICE'];
-    $pais = $_POST['COUNTRY'];
-    $CP = $_POST['CP'];
-    $fecha = $_POST['DATE'];
-    $Hora = $_POST['HOUR'];
-    $Mes = $_POST['MONTH'];
-    $Dia = $_POST['WEEKDAY'];
-    $asin = $_POST['ASIN'];
-    $User = $_SESSION['username'];
-
-
-    $Added = Date('D, d M Y H:i');
-    $data = $fecha . ' ' . $Hora;
-    $Horaaprox = substr($Hora, 0, 2);
-    $minutos = substr($Hora, 3, 5);
-    intval($Horaaprox);
-    if (intval($minutos) > 30) $Horaaprox++;
-
-    if ($Horaaprox > 23) $Horaaprox = 0;
-
-    if (strlen($Horaaprox) == 1) $Horaaprox = '0' + $Horaaprox;
+    $r = inputs();
 
     $query = "UPDATE
     `pedidos`
-SET
-    `NUMBER` = '$numero',
-    `PRICE` = $precio,
-    `COUNTRY` = '$pais',
-    `CP` = '$CP',
-    `DATEHOUR` = '$fecha',
-    `DATE` = '$fecha',
-    `HOUR` = '$Hora',
-    `HOURAPROX` = '$Horaaprox',
-    `MONTH` = '$Mes',
-    `WEEKDAY` = '$Dia',
-    `ASIN` = '$asin',
-    `USER` = '$User',
-    `ADDED` = '$Added'
+    SET
+    `NUMBER` = '$r[number]',
+    `PRICE` = $r[price],
+    `COUNTRY` = '$r[country]',
+    `CP` = '$r[CP]',
+    `DATEHOUR` = '$r[datehour]',
+    `DATE` = '$r[date]',
+    `HOUR` = '$r[hour]',
+    `HOURAPROX` = '$r[houraprox]',
+    `MONTH` = '$r[month]',
+    `WEEKDAY` = '$r[weekday]',
+    `ASIN` = '$r[asin]',
+    `USER` = '$r[user]',
+    `ADDED` = '$r[added]'
     WHERE
     `ID` = '$id'";
 
     $result = mysqli_query($connection, $query);
 
     if (!$result) die('Query Error ' . mysqli_errno($connection));
-    echo 'Updated by ' . $User . '. On ' . $id;
+    echo 'Updated by ' . $r['user'] . '. On ' . $id;
 }
 
 // Searchs into de DB
@@ -199,14 +170,13 @@ if (isset($_REQUEST['searchInDB'])) {
     }
 }
 
-// Top Function: Returns the entire Database
+// ?Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
-    //     if (!isset($_SESSION['username'])) {
-    //         // header('Location:login.php');
-    //         // echo 'No_login';
-    //         $login=false;
-
-    //    }
+    if (!isset($_SESSION['username'])) {
+        // header('Location:login.php');
+        // echo 'No_login';
+        $login = false;
+    }
 
     // Choosing DBS
     $table =  isset($_POST['table']) ? $_POST['table'] : 'pedidos';
@@ -269,4 +239,11 @@ if (isset($_REQUEST['BackupRow'])) {
 if (isset($_REQUEST['closeSession'])) {
     session_destroy();
     header('Location: login.php');
+}
+if (isset($_REQUEST['truncateBackup'])) {
+    $query = "TRUNCATE `backup`;
+    ";
+    $result = mysqli_query($connection, $query);
+
+    if (!$result) die('Query Error ' . mysqli_errno($connection));
 }

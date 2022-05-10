@@ -3,247 +3,234 @@
 
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
-    <title>AMZ</title>
-    <link rel="stylesheet" href="./js/jquery.js">
-    <!-- STYLE -->
-    <link rel="stylesheet" href="./style/reset.css">
-    <link rel="stylesheet" href="./style/style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+  <title>AMZ</title>
+  <link rel="stylesheet" href="./js/jquery.js">
+
+  <!-- STYLE -->
+  <link rel="stylesheet" href="./style/reset.css">
+  <link rel="stylesheet" href="./style/style.css">
+
+  <!-- Scripts -->
+  <!-- Maps library -->
+  <script src="./js/libraries/echarts.js"></script>
+
+
 </head>
 
 <body>
-    <nav class="navbar">
-        <a href="#" class="navbar_item"> Gestió Base de Dades Rispot</a>
-        <div class="nav_right">
-            <div class="search_box navbar_item">
-                <form class="search_box">
-                    <input type="search" id="search" placeholder="Buscar un pedido">
-                </form>
-                <a href="API.php?closeSession">
-                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 511.999 511.999" xml:space="preserve" style="display: flex;width:20px;margin:0 10px">
-                        <path style="width:10%;fill:white;" d="M384.955,256l120.28-120.28c9.019-9.019,9.019-23.642,0-32.66L408.94,6.765
+  <nav class="navbar">
+    <a href="#" class="navbar_item"> Gestió Base de Dades Rispot</a>
+    <div class="nav_right">
+      <div class="search_box navbar_item">
+        <form class="search_box">
+          <input type="search" id="search" placeholder="Buscar un pedido">
+        </form>
+        <a href="API.php?closeSession">
+          <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px" y="0px" viewBox="0 0 511.999 511.999" xml:space="preserve"
+            style="display: flex;width:20px;margin:0 10px">
+            <path style="width:10%;fill:white;" d="M384.955,256l120.28-120.28c9.019-9.019,9.019-23.642,0-32.66L408.94,6.765
                    c-9.019-9.019-23.642-9.019-32.66,0l-120.28,120.28L135.718,6.765c-9.019-9.019-23.642-9.019-32.66,0L6.764,103.058
                    c-9.019,9.019-9.019,23.642,0,32.66l120.28,120.28L6.764,376.28c-9.019,9.019-9.019,23.642,0,32.66l96.295,96.294
                    c9.019,9.019,23.642,9.019,32.66,0l120.28-120.28l120.28,120.28c9.019,9.019,23.642,9.019,32.66,0l96.295-96.294
                    c9.019-9.019,9.019-23.642,0-32.66L384.955,256z" />
-                    </svg></a>
-            </div>
+          </svg></a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="inputs">
+      <div class="inputs1 create_container">
+        <form id="task_form">
+          <div class="form_group"><input type="text" id="task_ID" disabled></div>
+          <div class="form_group"><input type="text" id="numero" placeholder="Número de pedido" required>
+          </div>
+          <div class="form_group"><input type="number" id="precio" placeholder="Precio: " required></div>
+          <div class="form_group"><input type="text" id="pais" placeholder="País: "></div>
+          <div class="form_group"><input type="text" id="CP" placeholder="CP: "> </div>
+          <div class="form_group">
+            <input type="date" id="fecha" placeholder="Fecha: ">
+          </div>
+          <div class="form_group"><input type="time" id="Hora" placeholder="Hora: "></div>
+
+          <div class="form_group"><input type="text" id="asin" placeholder="ASIN: "></div>
+          <button type="submit" id="submit_create">Guardar Registro</button>
+        </form>
+      </div>
+      <div class="inputs2 create_container">
+        <button id="verdatos" class="verdatos btn_template">Ver Datos</button>
+        <button id="verestadisticas" class="verestadisticas btn_template">Ver Estadísticas</button>
+      </div>
+    </div>
+
+    <!-- Right -->
+
+    <div class="task_container">
+      <form class="dbs_filters">
+        <div class="reload_limit">
+
+          <div class="reloadbox">
+            <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30px" class="reloadSvg"
+              height="30px">
+              <path
+                d="M 15 3 C 12.031398 3 9.3028202 4.0834384 7.2070312 5.875 A 1.0001 1.0001 0 1 0 8.5058594 7.3945312 C 10.25407 5.9000929 12.516602 5 15 5 C 20.19656 5 24.450989 8.9379267 24.951172 14 L 22 14 L 26 20 L 30 14 L 26.949219 14 C 26.437925 7.8516588 21.277839 3 15 3 z M 4 10 L 0 16 L 3.0507812 16 C 3.562075 22.148341 8.7221607 27 15 27 C 17.968602 27 20.69718 25.916562 22.792969 24.125 A 1.0001 1.0001 0 1 0 21.494141 22.605469 C 19.74593 24.099907 17.483398 25 15 25 C 9.80344 25 5.5490109 21.062074 5.0488281 16 L 8 16 L 4 10 z" />
+            </svg>
+          </div>
+          <div class="limitBox">
+            <input type="number" id="limit" placeholder="Limit de resultats">
+          </div>
         </div>
-    </nav>
-    <div class="container">
-        <div class="inputs">
-            <div class="inputs1 create_container">
-                <form id="task_form">
-                    <div class="form_group"><input type="text" id="task_ID" disabled></div>
-                    <div class="form_group"><input type="text" id="numero" placeholder="Número de pedido" required>
-                    </div>
-                    <div class="form_group"><input type="number" id="precio" placeholder="Precio: " required></div>
-                    <div class="form_group"><input type="text" id="pais" placeholder="País: "></div>
-                    <div class="form_group"><input type="text" id="CP" placeholder="CP: "> </div>
-                    <div class="form_group"><input type="date" id="fecha" placeholder="Fecha: "></div>
-                    <div class="form_group"><input type="time" id="Hora" placeholder="Hora: "></div>
-                    <div class="form_group"><select class="selects_inputs" name="mes" id="mes">
-                            <option value="Enero">Enero</option>
-                            <option value="Febrero">Febrero</option>
-                            <option value="Marzo">Marzo</option>
-                            <option value="Abril">Abril</option>
-                            <option value="Mayo">Mayo</option>
-                            <option value="Junio">Junio</option>
-                            <option value="Julio">Julio</option>
-                            <option value="Agosto">Agosto</option>
-                            <option value="Setiembre">Setiembre</option>
-                            <option value="Octubre">Octubre</option>
-                            <option value="Noviembre">Noviembre</option>
-                            <option value="Diciembre">Diciembre</option>
-                        </select></div>
-                    <div class="form_group"><select class="selects_inputs" name="dia" id="dia">
-                            <option value="Lunes">Lunes</option>
-                            <option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option>
-                            <option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option>
-                            <option value="Sábado">Sábado</option>
-                            <option value="Domingo">Domingo</option>
-                        </select></div>
-                    <div class="form_group"><input type="text" id="asin" placeholder="ASIN: "></div>
-                    <button type="submit" id="submit_create">Guardar Registro</button>
-                </form>
-            </div>
-            <div class="inputs2 create_container">
-                <button id="verdatos" class="verdatos btn_template">Ver Datos</button>
-                <button id="verestadisticas" class="verestadisticas btn_template">Ver Estadísticas</button>
-            </div>
-        </div>
-        <div class="task_container">
-            <form class="dbs_filters">
-                <div class="reloadbox">
-                    <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30px" class="reloadSvg" height="30px">
-                        <path
-                            d="M 15 3 C 12.031398 3 9.3028202 4.0834384 7.2070312 5.875 A 1.0001 1.0001 0 1 0 8.5058594 7.3945312 C 10.25407 5.9000929 12.516602 5 15 5 C 20.19656 5 24.450989 8.9379267 24.951172 14 L 22 14 L 26 20 L 30 14 L 26.949219 14 C 26.437925 7.8516588 21.277839 3 15 3 z M 4 10 L 0 16 L 3.0507812 16 C 3.562075 22.148341 8.7221607 27 15 27 C 17.968602 27 20.69718 25.916562 22.792969 24.125 A 1.0001 1.0001 0 1 0 21.494141 22.605469 C 19.74593 24.099907 17.483398 25 15 25 C 9.80344 25 5.5490109 21.062074 5.0488281 16 L 8 16 L 4 10 z" />
-                    </svg>
-                </div>
-                <div class="limitBox">
-                    <input type="number" id="limit" placeholder="Limit de resultats">
-                </div>
-                <div class="witch_db_general">
-                    <input type="radio" id="witch_db_general" name="witch_db" value="Rebuts" checked>
-                    <label for="witch_db_general">Comandes</label>
-                </div>
-                <div class="witch_db_backup">
-                    <input type="radio" id="witch_db_backup" name="witch_db" value="Backup">
-                    <label for="witch_db_backup">Backup</label>
-                </div>
-                <div class="witch_db_all">
-                    <input type="radio" id="witch_db_all" name="witch_db" value="Totes">
-                    <label for="witch_db_all">Totes</label>
-                </div>
-            </form>
-            <table class="table_tasks">
-                <div id="task_result" class="task_result">
-                    <ul id="list_written">
-                    </ul>
-                </div>
-                <thead>
-                    <tr class="row thead db_header">
-                        <td class='header_row theader_active' campo="ID">
-                            <a>ID </a>
-                        </td>
-                        <td class='header_row' campo="NUMBER">
-                            <a>Número </a>
-
-                        </td>
-                        <td class='header_row' campo="PRICE">
-                            <a>Precio </a>
-
-                        </td>
-                        <td class='header_row' campo="COUNTRY">
-                            <a>País </a>
-
-                        </td>
-                        <td class='header_row' campo="CP">
-                            <a>CP </a>
-
-                        </td>
-                        <td class='header_row' campo="DATE">
-                            <a>Fecha </a>
-
-                        </td>
-                        <td class='header_row' campo="HOUR">
-                            <a>Hora </a>
-
-                        </td>
-                        <td class='header_row' campo="HOURAPROX">
-                            <a>Aprox </a>
-
-                        </td>
-                        <td class='header_row' campo="MONTH">
-                            <a>Mes </a>
-
-                        </td>
-                        <td class='header_row' campo="WEEKDAY">
-                            <a>Día </a>
-
-                        </td>
-                        <td class='header_row' campo="ASIN">
-                            <a>ASIN </a>
-                        </td>
-                        <td class='header_row' campo="ADDED">
-                            <a>Added</a>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody id="tasks"></tbody>
-            </table>
-            <div class="stadistics">
-                <h3 class="subtitles_stad">Ventes totals: <b><span id="D_BrutTotal"></span></b>€</h3>
-                <p><b><span id="D_VentesTotals"></span></b> Ventes totals.</p>
-
-
-
-                <div class="all_stats">
-                    <!-- Dies de la setmana -->
-                    <div class="box_stat">
-                        <p class="stat_title stat_title_week">Ventes totals per dia de la semana:</p>
-
-                        <div class="grid_stats grid_stats_week">
-                            <div class="datos_box">
-                                <p class="av_p">Ventes els dilluns: </p>
-                                <p class="av_p">Ventes els dimarts: </p>
-                                <p class="av_p">Ventes els dimecres: </p>
-                                <p class="av_p">Ventes els dijous: </p>
-                                <p class="av_p">Ventes els divendres: </p>
-                                <p class="av_p">Ventes els dissabte: </p>
-                                <p class="av_p">Ventes els diumenge: </p>
-                            </div>
-                            <div class="datos_box">
-                                <div class="Barres_weekday">Si veus això vol dir que els gràfics dels dies de la setmana no funcionen.</div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Mesos de l'any -->
-                    <div class="box_stat">
-                        <p class="stat_title stat_title_months">Ventes totals per mesos de l'any:</p>
-
-                        <div class="grid_stats grid_stats_months">
-                            <div class="datos_box">
-                                <p class="av_p">Ventes en Gener: </p>
-                                <p class="av_p">Ventes en Febrer: </p>
-                                <p class="av_p">Ventes en Març: </p>
-                                <p class="av_p">Ventes en Abril: </p>
-                                <p class="av_p">Ventes en Maig: </p>
-                                <p class="av_p">Ventes en Juny: </p>
-                                <p class="av_p">Ventes en Juliol: </p>
-                                <p class="av_p">Ventes en Agost: </p>
-                                <p class="av_p">Ventes en Septembre: </p>
-                                <p class="av_p">Ventes en Octubre: </p>
-                                <p class="av_p">Ventes en Novembre: </p>
-                                <p class="av_p">Ventes en Decembre: </p>
-                            </div>
-                            <div class="datos_box">
-                                <div class="Barres_month">Si veus això vol dir que els gràfics dels mesos de l'any no funcionen.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Païssos -->
-                    <div class="box_stat">
-                        <p class="stat_title stat_title_hours">Ventes totals per hores aprox:</p>
-
-                        <div class="grid_stats grid_stats_hours">
-                            <div class="datos_box">
-                                <div class="hourstable">
-
-                                    <div class="datos_box">
-                                        <div class="Barres_hours">Si veus això vol dir que els gràfics dels mesos de l'any no funcionen.</div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
+        <div class="switch_dbs">
+          <div class="witch_db_general">
+            <input type="radio" id="witch_db_general" name="witch_db" value="Rebuts" checked>
+            <label for="witch_db_general">Comandes</label>
+          </div>
+          <div class="witch_db_backup">
+            <input type="radio" id="witch_db_backup" name="witch_db" value="Backup">
+            <label for="witch_db_backup">Backup</label>
+          </div>
+          <div class="witch_db_edited">
+            <input type="radio" id="witch_db_edited" name="witch_db" value="edited">
+            <label for="witch_db_edited">Edited</label>
+          </div>
+          <div class="witch_db_all">
+            <input type="radio" id="witch_db_all" name="witch_db" value="Totes">
+            <label for="witch_db_all">Totes</label>
+          </div>
+      </form>
 
     </div>
+    <table class="table_tasks">
+      <div id="task_result" class="task_result">
+        <ul id="list_written">
+        </ul>
+      </div>
+      <thead>
+        <tr class="row thead db_header">
+          <td class='header_row theader_active' campo="ID">
+            <a>ID </a>
+          </td>
+          <td class='header_row' campo="NUMBER">
+            <a>Número </a>
+
+          </td>
+          <td class='header_row' campo="PRICE">
+            <a>Precio </a>
+
+          </td>
+          <td class='header_row' campo="COUNTRY">
+            <a>País </a>
+
+          </td>
+          <td class='header_row' campo="CP">
+            <a>CP </a>
+
+          </td>
+          <td class='header_row' campo="DATE">
+            <a>Fecha </a>
+
+          </td>
+          <td class='header_row' campo="HOUR">
+            <a>Hora </a>
+
+          </td>
+
+          <td class='header_row' campo="MONTH">
+            <a>Mes </a>
+
+          </td>
+          <td class='header_row' campo="WEEKDAY">
+            <a>Día </a>
+
+          </td>
+          <td class='header_row' campo="ASIN">
+            <a>ASIN </a>
+          </td>
+          <td class='header_row' campo="ADDED">
+            <a>Added</a>
+
+          </td>
+
+        </tr>
+      </thead>
+      <tbody id="tasks"></tbody>
+    </table>
+
+
+    <div class="stadistics">
+      <h3 class="subtitles_stad">Ventes totals: <b><span id="D_BrutTotal"></span></b>€</h3>
+      <p><b><span id="D_VentesTotals"></span></b> Ventes totals.</p>
+
+
+
+      <div class="all_stats">
+        <!-- Dies de la setmana -->
+        <div class="box_stat">
+          <p class="stat_title stat_title_week">Ventes totals per dia de la semana</p>
+
+          <div class="grid_stats grid_stats_week stat_description">
+
+            <div id="grafWeek" style="width:80vw;height:400px;">
+            </div>
+
+          </div>
+
+        </div>
+        <!-- Mesos de l-any -->
+        <div class="box_stat">
+          <p class="stat_title stat_title_months">Ventes totals per mesos de l'any</p>
+          <div class="grid_stats grid_stats_months stat_description">
+            <div id="grafMonths" style="width:80vw;height:400px;"> </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- Hores del dia -->
+      <div class="box_stat">
+        <p class="stat_title stat_title stat_title_months">Ventes totals per hores del dia</p>
+        <div class="grid_stats grid_stats_months stat_description">
+          <div id="grafHours" style="width:80vw;height:400px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- IBANS -->
+      <div class="box_stat">
+        <p class="stat_title stat_title stat_title_ibans">Comparació entre ASINs</p>
+        <div class="grid_stats grid_stats_ibans stat_description">
+          <div id="grafASIN" style="width:80vw;height:400px;">
+          </div>
+        </div>
+      </div>
+
+
+
+
+
 
     </div>
 
 
+  </div>
+
+  </div>
+
+  </div>
 
 
 
-    <!-- SCRIPT -->
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
-    <script src="./js/jquery.js"></script>
-    <script src="./js/functions.js"></script>
-    <script src="./js/app.js"></script>
+
+
+  <!-- SCRIPT -->
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
+  <script src="./js/libraries/jquery.js"></script>
+  <script src="./js/functions.js"></script>
+  <!-- <script src="./js/graphs.js"></script> -->
+  <script src="./js/app.js"></script>
 </body>
 
 </html>

@@ -13,6 +13,7 @@ $paises=[];
 $hores=[];
 $date=[];
 $any=[];
+$asin=[];
 
 
 $cantidad_ventas = 0;
@@ -28,6 +29,7 @@ while ($row = mysqli_fetch_array($result_total,MYSQLI_BOTH
     array_push($paises,$row['COUNTRY']);
     array_push($hores,$row['HOURAPROX']);
     array_push($date,$row['DATE']);
+    array_push($asin,$row['ASIN']);
     array_push($any,substr($row['DATE'], -3,4));
 
 
@@ -38,6 +40,7 @@ $weekdays=array_count_values($weekdays);
 $paises=array_count_values($paises);
 $hores=array_count_values($hores);
 $anys=array_count_values($any);
+$asins=array_count_values($asin);
 
 
 $json = array();
@@ -49,7 +52,8 @@ $json[] = array(
     'WEEKDAYS' => $weekdays,
     'COUNTRY' => $paises,
     'HOURSAPROX'=>$hores,
-    'ANYS'=>$anys
+    'ANYS'=>$anys,
+    'ASIN'=>$asins,
 );
 
 $json_string = json_encode($json);

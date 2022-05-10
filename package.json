@@ -1,0 +1,24 @@
+{
+  "name": "rispot-manegement",
+  "version": "1.0.0",
+  "description": "SGBD Integrat pel control de RISPOT",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gubaupol/Rispot.git"
+  },
+  "keywords": [
+    "SQL",
+    "PHP",
+    "JS"
+  ],
+  "author": "Pol Gubau Amores",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gubaupol/Rispot/issues"
+  },
+  "homepage": "https://github.com/gubaupol/Rispot#readme"
+}
