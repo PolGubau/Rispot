@@ -173,7 +173,7 @@ if (isset($_REQUEST['searchInDB'])) {
 // ?Top Function: Returns the entire Database
 if (isset($_REQUEST['viewDB'])) {
     if (!isset($_SESSION['username'])) {
-        header('Location:login.php');
+        
         echo 'No_login';
         $login = false;
     }
