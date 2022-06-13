@@ -174,7 +174,7 @@ if (isset($_REQUEST['searchInDB'])) {
 if (isset($_REQUEST['viewDB'])) {
     if (!isset($_SESSION['username'])) {
         
-        echo 'No_login';
+        echo '';
         $login = false;
     }
 
